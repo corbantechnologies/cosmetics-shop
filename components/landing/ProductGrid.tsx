@@ -39,16 +39,16 @@ const PRODUCTS = [
 
 export default function ProductGrid() {
     return (
-        <section className="bg-white py-20">
-            <div className="container mx-auto px-6">
-                <div className="text-center mb-16">
+        <section className="bg-white py-16 md:py-20">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="text-center mb-12 md:mb-16">
                     <h2 className="text-3xl md:text-4xl font-serif text-foreground mb-4">Curated Excellence</h2>
-                    <p className="text-foreground/60 max-w-2xl mx-auto">
+                    <p className="text-foreground/60 max-w-2xl mx-auto text-sm md:text-base">
                         Our most loved products, chosen by beauty experts for their proven results and luxurious texture.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-12">
                     {PRODUCTS.map((product) => (
                         <div key={product.id} className="group cursor-pointer">
                             {/* Image Container */}
@@ -59,26 +59,27 @@ export default function ProductGrid() {
                                     fill
                                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                                 />
-                                <button className="absolute bottom-0 left-0 w-full py-4 bg-foreground/90 text-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 font-medium">
+                                {/* Add to Cart - Visible on hover for desktop, could stay hidden on mobile or shown as icon */}
+                                <button className="absolute bottom-0 left-0 w-full py-3 md:py-4 bg-foreground/90 text-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 font-medium text-sm md:text-base">
                                     Add to Cart
                                 </button>
                             </div>
 
                             {/* Content */}
                             <div className="text-center">
-                                <p className="text-xs text-primary uppercase tracking-wider mb-1">{product.category}</p>
-                                <h3 className="text-lg font-serif text-foreground font-medium mb-2 group-hover:text-primary transition-colors">
+                                <p className="text-[10px] md:text-xs text-primary uppercase tracking-wider mb-1">{product.category}</p>
+                                <h3 className="text-sm md:text-lg font-serif text-foreground font-medium mb-1 md:mb-2 group-hover:text-primary transition-colors line-clamp-1">
                                     {product.name}
                                 </h3>
-                                <div className="flex items-center justify-center gap-1 mb-2">
+                                <div className="flex items-center justify-center gap-1 mb-1 md:mb-2">
                                     {[...Array(5)].map((_, i) => (
                                         <Star
                                             key={i}
-                                            className={`w-3 h-3 ${i < product.rating ? "fill-primary text-primary" : "text-gray-300"}`}
+                                            className={`w-2.5 h-2.5 md:w-3 md:h-3 ${i < product.rating ? "fill-primary text-primary" : "text-gray-300"}`}
                                         />
                                     ))}
                                 </div>
-                                <p className="text-md font-semibold text-foreground">${product.price.toFixed(2)}</p>
+                                <p className="text-sm md:text-md font-semibold text-foreground">${product.price.toFixed(2)}</p>
                             </div>
                         </div>
                     ))}
