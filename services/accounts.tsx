@@ -20,6 +20,16 @@ export interface User {
   is_customer: boolean;
 }
 
+export interface updateUser {
+  email: string;
+  first_name: string;
+  last_name: string;
+  country: string;
+  phone_number: string | null;
+  county: string | null;
+  town: string | null;
+}
+
 export interface forgotPassword {
   email: string;
 }
@@ -72,6 +82,30 @@ export const signupCustomer = async (data: SignupCustomer): Promise<any> => {
   const response: AxiosResponse<any> = await apiActions.post(
     `/api/v1/auth/signup/customer/`,
     data
+  );
+  return response.data;
+};
+
+export const updateAccount = async (
+  usercode: string,
+  data: updateUser,
+  headers: { headers: { Authorization: string } }
+): Promise<User> => {
+  const response: AxiosResponse<User> = await apiActions.patch(
+    `/api/v1/auth/${usercode}/`,
+    data,
+    headers
+  );
+  return response.data;
+};
+
+export const deleteAccount = async (
+  usercode: string,
+  headers: { headers: { Authorization: string } }
+): Promise<User> => {
+  const response: AxiosResponse<User> = await apiActions.delete(
+    `/api/v1/auth/${usercode}/`,
+    headers
   );
   return response.data;
 };
