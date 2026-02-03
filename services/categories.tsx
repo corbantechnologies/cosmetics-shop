@@ -25,11 +25,9 @@ interface updateCategory {
     is_active: boolean;
 }
 
-export const getCategories = async (headers: {
-    headers: { Authorization: string };
-}): Promise<Category[]> => {
+export const getCategories = async (): Promise<Category[]> => {
     const response: AxiosResponse<PaginatedResponse<Category>> =
-        await apiActions.get(`/api/v1/categories/`, headers);
+        await apiActions.get(`/api/v1/categories/`);
     return response.data.results || [];
 };
 
@@ -40,6 +38,7 @@ export const getCategory = async (reference: string): Promise<Category> => {
     return response.data;
 };
 
+// Authenticated
 export const createCategory = async (
     data: createCategory,
     headers: { headers: { Authorization: string } }

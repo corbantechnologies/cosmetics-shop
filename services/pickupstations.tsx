@@ -35,25 +35,22 @@ interface updatePickupStation {
     cost_to_customer: string;
 }
 
-export const getPickupStations = async (headers: {
-    headers: { Authorization: string };
-}): Promise<PickupStation[]> => {
+export const getPickupStations = async (): Promise<PickupStation[]> => {
     const response: AxiosResponse<PaginatedResponse<PickupStation>> =
-        await apiActions.get(`/api/v1/pickupstations/`, headers);
+        await apiActions.get(`/api/v1/pickupstations/`);
     return response.data.results || [];
 };
 
 export const getPickupStation = async (
     reference: string,
-    headers: { headers: { Authorization: string } }
 ): Promise<PickupStation> => {
     const response: AxiosResponse<PickupStation> = await apiActions.get(
-        `/api/v1/pickupstations/${reference}/`,
-        headers
+        `/api/v1/pickupstations/${reference}/`
     );
     return response.data;
 };
 
+// Authenticated
 export const createPickupStation = async (
     data: createPickupStation,
     headers: { headers: { Authorization: string } }

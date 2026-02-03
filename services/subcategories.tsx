@@ -26,21 +26,17 @@ interface updateSubCategory {
     is_active: boolean;
 }
 
-export const getSubCategories = async (headers: {
-    headers: { Authorization: string };
-}): Promise<SubCategory[]> => {
+export const getSubCategories = async (): Promise<SubCategory[]> => {
     const response: AxiosResponse<PaginatedResponse<SubCategory>> =
-        await apiActions.get(`/api/v1/subcategories/`, headers);
+        await apiActions.get(`/api/v1/subcategories/`);
     return response.data.results || [];
 };
 
 export const getSubCategory = async (
     reference: string,
-    headers: { headers: { Authorization: string } }
 ): Promise<SubCategory> => {
     const response: AxiosResponse<SubCategory> = await apiActions.get(
-        `/api/v1/subcategories/${reference}/`,
-        headers
+        `/api/v1/subcategories/${reference}/`
     );
     return response.data;
 };
