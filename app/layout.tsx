@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import NextAuthProvider from "@/providers/NextAuthProvider";
 import TanstackQueryProvider from "@/providers/TanstackQueryProvider";
@@ -10,12 +10,16 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-
+export const metadata: Metadata = {
+  title: "Clate Cosmetics",
+  description: "Luxury Cosmetics for the Modern Woman",
+};
 
 export default function RootLayout({
   children,
@@ -25,12 +29,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>Cosmetics Gift Shop</title>
-        <meta name="description" content="Cosmetics Gift Shop" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${playfair.variable} antialiased`}
       >
         <Toaster position="top-center" />
 
