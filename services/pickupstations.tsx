@@ -21,6 +21,7 @@ export interface PickupStation {
   station_code: string;
   created_at: string;
   updated_at: string;
+  estimated_delivery_days: number;
   reference: string;
 }
 
@@ -31,6 +32,7 @@ interface createPickupStation {
   map_link: string;
   is_active: boolean;
   cost_to_customer: string;
+  estimated_delivery_days: number;
 }
 
 interface updatePickupStation {
@@ -40,6 +42,7 @@ interface updatePickupStation {
   map_link: string;
   is_active: boolean;
   cost_to_customer: string;
+  estimated_delivery_days: number;
 }
 
 // Authenticated
