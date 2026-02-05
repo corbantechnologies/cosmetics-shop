@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import { addProductImages } from "@/services/products";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
+import { useFetchProductVendor } from "@/hooks/products/actions";
 import toast from "react-hot-toast";
 import { Loader2, Upload, X } from "lucide-react";
 
@@ -17,6 +18,7 @@ export default function UploadProductImages({
   onSuccess,
 }: UploadProductImagesProps) {
   const authHeaders = useAxiosAuth();
+  const { data: product } = useFetchProductVendor(productReference);
   const [loading, setLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
 
@@ -32,11 +34,25 @@ export default function UploadProductImages({
 
       setLoading(true);
       try {
-        // Manually construct FormData to ensure multiple 'uploaded_images' keys
+        // Manually construct FormData
         const formData = new FormData();
+
+        // Append images
         selectedImages.forEach((file) => {
           formData.append("uploaded_images", file);
         });
+
+        // Append existing sub_categories to prevent them from being cleared
+        // The API likely treats this PATCH as an update where missing M2M relations might be inferred as empty
+        // (though unexpected for PATCH, we safeguard against it).
+        if (product?.sub_category) {
+          product.sub_category.forEach((sub) => {
+            formData.append("sub_categories", sub.name);
+          });
+        }
+
+        // Also preserve description and name if needed, assuming the backend might be buggy with partial updates
+        // but let's start with sub_categories as requested.
 
         await addProductImages(productReference, formData, authHeaders);
 

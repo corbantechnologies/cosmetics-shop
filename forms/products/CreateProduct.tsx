@@ -6,7 +6,7 @@ import { createProduct } from "@/services/products";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, X, ChevronDown } from "lucide-react";
 import { useFetchSubCategories } from "@/hooks/subcategories/actions";
 
 interface CreateProductProps {
@@ -18,6 +18,12 @@ export function CreateProduct({ onSuccess }: CreateProductProps) {
   const authHeaders = useAxiosAuth();
   const { data: subcategories } = useFetchSubCategories();
   const [loading, setLoading] = useState(false);
+  const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
+  const [subSearch, setSubSearch] = useState("");
+
+  const filteredSubcategories = subcategories?.filter((sub) =>
+    sub.name.toLowerCase().includes(subSearch.toLowerCase()),
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -42,6 +48,8 @@ export function CreateProduct({ onSuccess }: CreateProductProps) {
           ...values,
           tags: tagsArray,
         };
+
+        console.log(payload);
 
         const response = await createProduct(payload, authHeaders);
 
@@ -107,28 +115,117 @@ export function CreateProduct({ onSuccess }: CreateProductProps) {
           htmlFor="sub_categories"
           className="block text-sm font-medium text-foreground mb-1"
         >
-          Subcategory
+          Subcategories
         </label>
-        <select
-          id="sub_categories"
-          name="sub_categories"
-          onChange={(e) => {
-            const val = e.target.value;
-            formik.setFieldValue("sub_categories", val ? [val] : []);
-          }}
-          onBlur={formik.handleBlur}
-          value={formik.values.sub_categories[0] || ""}
-          className="w-full px-4 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors bg-white"
-        >
-          <option value="">Select Subcategory</option>
-          {subcategories?.map((sub) => (
-            <option key={sub.reference} value={sub.name}>
-              {sub.name}
-            </option>
+
+        {/* Selected Chips */}
+        <div className="flex flex-wrap gap-2 mb-2">
+          {formik.values.sub_categories.map((subName) => (
+            <span
+              key={subName}
+              className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20"
+            >
+              {subName}
+              <button
+                type="button"
+                onClick={() => {
+                  const newSubs = formik.values.sub_categories.filter(
+                    (s) => s !== subName,
+                  );
+                  formik.setFieldValue("sub_categories", newSubs);
+                }}
+                className="ml-1 text-primary hover:text-primary/80 focus:outline-none"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
           ))}
-        </select>
+        </div>
+
+        {/* Dropdown Toggle */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setIsSubDropdownOpen(!isSubDropdownOpen)}
+            className="w-full flex items-center justify-between px-4 py-2 border border-secondary rounded-sm bg-white text-left focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm"
+          >
+            <span
+              className={
+                formik.values.sub_categories.length === 0
+                  ? "text-muted-foreground"
+                  : "text-foreground"
+              }
+            >
+              {formik.values.sub_categories.length > 0
+                ? "Add more subcategories..."
+                : "Select Subcategories"}
+            </span>
+            <ChevronDown
+              className={`w-4 h-4 transition-transform ${isSubDropdownOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+
+          {/* Dropdown Content */}
+          {isSubDropdownOpen && (
+            <div className="absolute z-10 w-full mt-1 bg-white border border-secondary rounded-sm shadow-lg max-h-60 flex flex-col">
+              <div className="p-2 border-b border-secondary/20 sticky top-0 bg-white">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={subSearch}
+                  onChange={(e) => setSubSearch(e.target.value)}
+                  className="w-full px-3 py-1.5 text-sm border border-secondary/50 rounded-sm focus:outline-none focus:border-primary"
+                />
+              </div>
+              <div className="overflow-y-auto p-1 custom-scrollbar flex-1">
+                {filteredSubcategories?.length === 0 ? (
+                  <div className="p-3 text-center text-xs text-muted-foreground">
+                    No matches found
+                  </div>
+                ) : (
+                  filteredSubcategories?.map((sub) => {
+                    const isSelected = formik.values.sub_categories.includes(
+                      sub.name,
+                    );
+                    return (
+                      <label
+                        key={sub.reference}
+                        className="flex items-center px-3 py-2 hover:bg-secondary/10 cursor-pointer rounded-sm"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => {
+                            let newSubs: string[];
+                            if (isSelected) {
+                              newSubs = formik.values.sub_categories.filter(
+                                (s) => s !== sub.name,
+                              );
+                            } else {
+                              newSubs = [
+                                ...formik.values.sub_categories,
+                                sub.name,
+                              ];
+                            }
+                            formik.setFieldValue("sub_categories", newSubs);
+                          }}
+                          className="h-4 w-4 text-primary border-secondary rounded focus:ring-primary mr-3"
+                        />
+                        <span
+                          className={`text-sm ${isSelected ? "font-medium text-foreground" : "text-foreground/80"}`}
+                        >
+                          {sub.name}
+                        </span>
+                      </label>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          )}
+        </div>
         <p className="text-xs text-muted-foreground mt-1">
-          Select the primary subcategory for this product.
+          Select one or more subcategories using the list above.
         </p>
       </div>
 
