@@ -54,7 +54,7 @@ export const getProductVariant = async (reference: string, headers: { headers: {
 };
 
 export const createProductVariant = async (data: createProductVariant, headers: { headers: { Authorization: string } }): Promise<ProductVariant> => {
-    const response: AxiosResponse<ProductVariant> = await apiActions.post(
+    const response: AxiosResponse<ProductVariant> = await apiMultipartActions.post(
         `/api/v1/product-variants/`,
         data,
         headers
@@ -63,7 +63,7 @@ export const createProductVariant = async (data: createProductVariant, headers: 
 };
 
 export const updateProductVariant = async (reference: string, data: updateProductVariant, headers: { headers: { Authorization: string } }): Promise<ProductVariant> => {
-    const response: AxiosResponse<ProductVariant> = await apiActions.patch(
+    const response: AxiosResponse<ProductVariant> = await apiMultipartActions.patch(
         `/api/v1/product-variants/${reference}/`,
         data,
         headers
