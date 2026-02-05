@@ -9,6 +9,7 @@ import { SkeletonRow } from "@/components/dashboard/DashboardSkeletons";
 import { formatDate } from "@/components/dashboard/utils";
 import VendorModal from "@/components/vendor/Modal";
 import UploadProductImages from "@/forms/products/UploadProductImages";
+import UpdateProduct from "@/forms/products/UpdateProduct";
 import {
   Edit,
   Package,
@@ -31,7 +32,7 @@ export default function ProductPage() {
     refetch,
   } = useFetchProductVendor(reference);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -101,7 +102,10 @@ export default function ProductPage() {
               Code: {product.product_code}
             </p>
           </div>
-          <button className="inline-flex items-center justify-center rounded-sm border border-secondary bg-white px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-secondary/5">
+          <button
+            onClick={() => setIsEditModalOpen(true)}
+            className="inline-flex items-center justify-center rounded-sm border border-secondary bg-white px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-secondary/5"
+          >
             <Edit className="mr-2 h-4 w-4" />
             Edit Product
           </button>
@@ -321,6 +325,20 @@ export default function ProductPage() {
             productReference={reference}
             onSuccess={() => {
               setIsUploadModalOpen(false);
+              if (refetch) refetch();
+            }}
+          />
+        </VendorModal>
+
+        <VendorModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          title="Update Product"
+        >
+          <UpdateProduct
+            productReference={reference}
+            onSuccess={() => {
+              setIsEditModalOpen(false);
               if (refetch) refetch();
             }}
           />
