@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 "use client"
 
 import { apiActions, apiMultipartActions } from "@/tools/axios";
@@ -58,7 +59,6 @@ export interface createProduct {
     description: string;
     sub_categories: string[]; // sub category name
     tags: string[]; // tag names. As the vendor pleases
-    is_active: boolean;
 }
 
 export interface addProductImages {
