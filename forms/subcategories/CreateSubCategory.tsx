@@ -32,7 +32,7 @@ export default function CreateSubCategory({ onSuccess }: { onSuccess?: () => voi
                 if (onSuccess) onSuccess();
             } catch (error) {
                 toast.error('Failed to create subcategory');
-                console.error(error);
+                console.log(error);
             } finally {
                 setLoading(false);
             }
@@ -75,7 +75,7 @@ export default function CreateSubCategory({ onSuccess }: { onSuccess?: () => voi
                         <option disabled>Loading categories...</option>
                     ) : (
                         categories?.map((category) => (
-                            <option key={category.reference} value={category.reference}>
+                            <option key={category.reference} value={category.name}>
                                 {category.name}
                             </option>
                         ))

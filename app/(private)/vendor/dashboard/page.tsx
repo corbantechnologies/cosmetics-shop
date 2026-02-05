@@ -12,21 +12,29 @@ import {
   User as UserIcon,
   TrendingUp,
   Package,
+  Plus,
 } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import SectionHeader from "@/components/dashboard/SectionHeader";
 import { SkeletonRow } from "@/components/dashboard/DashboardSkeletons";
 import { formatDate } from "@/components/dashboard/utils";
+import VendorModal from "@/components/vendor/Modal";
+import CreateCategory from "@/forms/categories/CreateCategory";
+import CreateSubCategory from "@/forms/subcategories/CreateSubCategory";
 
 // --- Main Page ---
 
 export default function VendorDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Modal States
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isSubCategoryModalOpen, setIsSubCategoryModalOpen] = useState(false);
+
   const { data: vendor, isLoading: isLoadingVendor } = useFetchAccount();
-  const { data: categories, isLoading: isLoadingCategories } =
+  const { data: categories, isLoading: isLoadingCategories, refetch: refetchCategories } =
     useFetchCategories();
-  const { data: subcategories, isLoading: isLoadingSubcategories } =
+  const { data: subcategories, isLoading: isLoadingSubcategories, refetch: refetchSubcategories } =
     useFetchSubCategories();
   const { data: pickupStations, isLoading: isLoadingPickupStations } =
     useFetchPickupStations();
@@ -94,8 +102,8 @@ export default function VendorDashboard() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 pb-4 text-sm font-medium transition-all relative whitespace-nowrap ${activeTab === tab.id
-                  ? "text-primary transition-colors"
-                  : "text-foreground/40 hover:text-foreground/70"
+                ? "text-primary transition-colors"
+                : "text-foreground/40 hover:text-foreground/70"
                 }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -173,10 +181,19 @@ export default function VendorDashboard() {
 
           {activeTab === "categories" && (
             <div className="animate-in fade-in duration-500">
-              <SectionHeader
-                title="Categories Management"
-                description="Manage your product categories and their visibility."
-              />
+              <div className="flex justify-between items-start md:items-center mb-6">
+                <SectionHeader
+                  title="Categories Management"
+                  description="Manage your product categories and their visibility."
+                />
+                <button
+                  onClick={() => setIsCategoryModalOpen(true)}
+                  className="inline-flex items-center justify-center rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Category
+                </button>
+              </div>
               <div className="bg-white border border-secondary/30 rounded-sm overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
@@ -244,10 +261,19 @@ export default function VendorDashboard() {
 
           {activeTab === "subcategories" && (
             <div className="animate-in fade-in duration-500">
-              <SectionHeader
-                title="Subcategories Overview"
-                description="Deep dive into your product sub-classifications."
-              />
+              <div className="flex justify-between items-start md:items-center mb-6">
+                <SectionHeader
+                  title="Subcategories Overview"
+                  description="Deep dive into your product sub-classifications."
+                />
+                <button
+                  onClick={() => setIsSubCategoryModalOpen(true)}
+                  className="inline-flex items-center justify-center rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Subcategory
+                </button>
+              </div>
               <div className="bg-white border border-secondary/30 rounded-sm overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
@@ -398,6 +424,33 @@ export default function VendorDashboard() {
             </div>
           )}
         </div>
+
+        {/* Modals */}
+        <VendorModal
+          isOpen={isCategoryModalOpen}
+          onClose={() => setIsCategoryModalOpen(false)}
+          title="Create New Category"
+        >
+          <CreateCategory
+            onSuccess={() => {
+              setIsCategoryModalOpen(false);
+              refetchCategories();
+            }}
+          />
+        </VendorModal>
+
+        <VendorModal
+          isOpen={isSubCategoryModalOpen}
+          onClose={() => setIsSubCategoryModalOpen(false)}
+          title="Create New Subcategory"
+        >
+          <CreateSubCategory
+            onSuccess={() => {
+              setIsSubCategoryModalOpen(false);
+              refetchSubcategories();
+            }}
+          />
+        </VendorModal>
       </div>
     </div>
   );
