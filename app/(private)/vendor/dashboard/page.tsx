@@ -28,6 +28,7 @@ import UpdateSubCategory from "@/forms/subcategories/UpdateSubCategory";
 import CreatePickupStation from "@/forms/pickupstations/CreatePickupStation";
 import UpdatePickupStation from "@/forms/pickupstations/UpdatePickupStation";
 import UpdateShopForm from "@/forms/shop/UpdateShop";
+import { useFetchProductsVendor } from "@/hooks/products/actions";
 
 // --- Main Page ---
 
@@ -71,6 +72,11 @@ export default function VendorDashboard() {
     isLoading: isLoadingPickupStations,
     refetch: refetchPickupStations,
   } = useFetchPickupStations();
+  const {
+    data: products,
+    isLoading: isLoadingProducts,
+    refetch: refetchProducts,
+  } = useFetchProductsVendor();
 
   const { data: shopData, refetch: refetchShop } = useFetchShop(
     vendor?.shop?.shop_code || "",
@@ -102,7 +108,12 @@ export default function VendorDashboard() {
       icon: MapPin,
       loading: isLoadingPickupStations,
     },
-    { title: "Products", value: 0, icon: Package, loading: false }, // Placeholder for future products
+    {
+      title: "Products",
+      value: products?.length || 0,
+      icon: Package,
+      loading: isLoadingProducts,
+    },
   ];
 
   return (
