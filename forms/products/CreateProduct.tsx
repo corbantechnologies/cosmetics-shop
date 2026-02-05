@@ -128,7 +128,7 @@ export function CreateProduct({ onSuccess }: CreateProductProps) {
           ))}
         </select>
         <p className="text-xs text-muted-foreground mt-1">
-          Select the primary category for this product.
+          Select the primary subcategory for this product.
         </p>
       </div>
 
