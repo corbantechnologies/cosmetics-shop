@@ -7,10 +7,10 @@ import { useFetchPickupStation } from '@/hooks/pickupstations/actions';
 import useAxiosAuth from '@/hooks/authentication/useAxiosAuth';
 import toast from 'react-hot-toast';
 
-export default function UpdatePickupStation({ reference, onSuccess }: { reference: string, onSuccess?: () => void }) {
+export default function UpdatePickupStation({ station_code, onSuccess, currency }: { station_code: string, onSuccess?: () => void, currency: string }) {
     const authHeaders = useAxiosAuth();
     const [loading, setLoading] = useState(false);
-    const { data: station, isLoading, isError } = useFetchPickupStation(reference);
+    const { data: station, isLoading, isError } = useFetchPickupStation(station_code);
 
     const formik = useFormik({
         initialValues: {
@@ -25,7 +25,7 @@ export default function UpdatePickupStation({ reference, onSuccess }: { referenc
         onSubmit: async (values) => {
             setLoading(true);
             try {
-                await updatePickupStation(reference, values, authHeaders);
+                await updatePickupStation(station_code, values, authHeaders);
                 toast.success('Pickup Station updated successfully');
                 if (onSuccess) onSuccess();
             } catch (error) {
@@ -110,20 +110,25 @@ export default function UpdatePickupStation({ reference, onSuccess }: { referenc
                 </div>
                 <div>
                     <label htmlFor="cost_to_customer" className="block text-sm font-medium text-foreground mb-1">
-                        Cost to Customer
+                        Cost to Customer ({currency})
                     </label>
-                    <input
-                        id="cost_to_customer"
-                        name="cost_to_customer"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        required
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.cost_to_customer}
-                        className="w-full px-4 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                    />
+                    <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/50 text-sm">
+                            {currency}
+                        </span>
+                        <input
+                            id="cost_to_customer"
+                            name="cost_to_customer"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            required
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.cost_to_customer}
+                            className="w-full pl-12 pr-4 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+                        />
+                    </div>
                 </div>
             </div>
 

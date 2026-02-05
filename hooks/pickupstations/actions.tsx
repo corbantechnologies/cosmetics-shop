@@ -11,10 +11,10 @@ export function useFetchPickupStations() {
     });
 }
 
-export function useFetchPickupStation(reference: string) {
+export function useFetchPickupStation(station_code: string) {
     return useQuery({
-        queryKey: ["pickupstation", reference],
-        queryFn: () => getPickupStation(reference),
-        enabled: !!reference,
+        queryKey: ["pickupstation", station_code],
+        queryFn: () => getPickupStation(station_code),
+        enabled: !!station_code,
     });
 }

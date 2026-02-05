@@ -8,6 +8,7 @@ import { PaginatedResponse } from "./general";
 export interface Shop {
     id: string;
     name: string;
+    currency: string;
     description: string | null;
     logo: string | null;
     banner: string | null;
@@ -27,6 +28,7 @@ export interface Shop {
 
 export interface updateShop {
     name: string;
+    currency: string;
     description: string;
     logo: string;
     banner: string;

@@ -12,6 +12,7 @@ export interface SubCategory {
     shop_details: {
         shop_code: string;
         name: string;
+        currency: string;
         logo: string | null;
     };
     is_active: boolean;

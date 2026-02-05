@@ -81,7 +81,7 @@ export default function UpdateSubCategory({ reference, onSuccess }: { reference:
                         <option disabled>Loading categories...</option>
                     ) : (
                         categories?.map((category) => (
-                            <option key={category.reference} value={category.reference}>
+                            <option key={category.reference} value={category.name}>
                                 {category.name}
                             </option>
                         ))

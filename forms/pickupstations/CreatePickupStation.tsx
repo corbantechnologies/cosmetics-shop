@@ -6,7 +6,7 @@ import { createPickupStation } from '@/services/pickupstations';
 import useAxiosAuth from '@/hooks/authentication/useAxiosAuth';
 import toast from 'react-hot-toast';
 
-export default function CreatePickupStation({ onSuccess }: { onSuccess?: () => void }) {
+export default function CreatePickupStation({ onSuccess, currency }: { onSuccess?: () => void, currency: string }) {
     const authHeaders = useAxiosAuth();
     const [loading, setLoading] = useState(false);
 
@@ -105,20 +105,25 @@ export default function CreatePickupStation({ onSuccess }: { onSuccess?: () => v
                 </div>
                 <div>
                     <label htmlFor="cost_to_customer" className="block text-sm font-medium text-foreground mb-1">
-                        Cost to Customer
+                        Cost to Customer ({currency})
                     </label>
-                    <input
-                        id="cost_to_customer"
-                        name="cost_to_customer"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        required
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.cost_to_customer}
-                        className="w-full px-4 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                    />
+                    <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/50 text-sm">
+                            {currency}
+                        </span>
+                        <input
+                            id="cost_to_customer"
+                            name="cost_to_customer"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            required
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.cost_to_customer}
+                            className="w-full pl-12 pr-4 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+                        />
+                    </div>
                 </div>
             </div>
 

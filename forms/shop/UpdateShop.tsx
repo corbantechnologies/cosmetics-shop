@@ -1,15 +1,209 @@
-// use formik
-// no yup validations
-// be wary of the logo and banner upload
-// use the existing shop update api
+"use client";
 
+import React, { useState, useEffect } from "react";
+import { useFormik } from "formik";
+import { updateShop } from "@/services/shops";
+import { useFetchAccount } from "@/hooks/accounts/actions";
+import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
+import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
-"use client"
+interface UpdateShopFormProps {
+    onSuccess?: () => void;
+}
 
-export default function UpdateShopForm() {
+export default function UpdateShopForm({ onSuccess }: UpdateShopFormProps) {
+    const authHeaders = useAxiosAuth();
+    const [loading, setLoading] = useState(false);
+    const { data: vendor } = useFetchAccount();
+    const shop = vendor?.shop;
+
+    const formik = useFormik({
+        initialValues: {
+            name: shop?.name || "",
+            description: shop?.description || "",
+            logo: shop?.logo || "",
+            banner: shop?.banner || "",
+            address: shop?.address || "",
+            city: shop?.city || "",
+            state: shop?.state || "",
+            zip_code: shop?.zip_code || "",
+            country: shop?.country || "",
+            phone: shop?.phone || "",
+            email: shop?.email || "",
+            currency: shop?.currency || "",
+        },
+        enableReinitialize: true,
+        onSubmit: async (values) => {
+            if (!shop?.shop_code) {
+                toast.error("Shop information not found");
+                return;
+            }
+
+            setLoading(true);
+            try {
+                await updateShop(shop.shop_code, values, authHeaders);
+                toast.success("Shop details updated successfully");
+                if (onSuccess) onSuccess();
+            } catch (error) {
+                toast.error("Failed to update shop details");
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        },
+    });
+
+    if (!shop) {
+        return (
+            <div className="flex justify-center p-4">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            </div>
+        );
+    }
+
     return (
-        <div>
-            <h1>Update Shop</h1>
-        </div>
+        <form onSubmit={formik.handleSubmit} className="space-y-4 max-w-2xl px-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <label htmlFor="name" className="text-sm font-medium text-foreground">
+                        Shop Name
+                    </label>
+                    <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        onChange={formik.handleChange}
+                        value={formik.values.name}
+                        className="w-full px-3 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                        required
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label htmlFor="currency" className="text-sm font-medium text-foreground">
+                        Currency
+                    </label>
+                    <select
+                        id="currency"
+                        name="currency"
+                        onChange={formik.handleChange}
+                        value={formik.values.currency}
+                        className="w-full px-3 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary bg-white"
+                        required
+                    >
+                        <option value="" disabled>Select Currency</option>
+                        <option value="KES">KES (Kenyan Shilling)</option>
+                        <option value="USD">USD (US Dollar)</option>
+                        <option value="EUR">EUR (Euro)</option>
+                        <option value="GBP">GBP (British Pound)</option>
+                    </select>
+                </div>
+
+                <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium text-foreground">
+                        Email
+                    </label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        onChange={formik.handleChange}
+                        value={formik.values.email}
+                        className="w-full px-3 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                        required
+                    />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                    <label
+                        htmlFor="description"
+                        className="text-sm font-medium text-foreground"
+                    >
+                        Description
+                    </label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows={3}
+                        onChange={formik.handleChange}
+                        value={formik.values.description}
+                        className="w-full px-3 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label htmlFor="phone" className="text-sm font-medium text-foreground">
+                        Phone
+                    </label>
+                    <input
+                        id="phone"
+                        name="phone"
+                        type="text"
+                        onChange={formik.handleChange}
+                        value={formik.values.phone}
+                        className="w-full px-3 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label
+                        htmlFor="country"
+                        className="text-sm font-medium text-foreground"
+                    >
+                        Country
+                    </label>
+                    <input
+                        id="country"
+                        name="country"
+                        type="text"
+                        onChange={formik.handleChange}
+                        value={formik.values.country}
+                        className="w-full px-3 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label htmlFor="city" className="text-sm font-medium text-foreground">
+                        City
+                    </label>
+                    <input
+                        id="city"
+                        name="city"
+                        type="text"
+                        onChange={formik.handleChange}
+                        value={formik.values.city}
+                        className="w-full px-3 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label
+                        htmlFor="address"
+                        className="text-sm font-medium text-foreground"
+                    >
+                        Address
+                    </label>
+                    <input
+                        id="address"
+                        name="address"
+                        type="text"
+                        onChange={formik.handleChange}
+                        value={formik.values.address}
+                        className="w-full px-3 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                </div>
+            </div>
+
+            <div className="pt-4 flex justify-end">
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="px-6 py-2 bg-primary text-primary-foreground font-medium rounded-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+                >
+                    {loading ? "Updating..." : "Update Shop"}
+                </button>
+            </div>
+        </form>
     );
 }

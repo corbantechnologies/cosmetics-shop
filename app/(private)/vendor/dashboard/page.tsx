@@ -13,6 +13,8 @@ import {
   TrendingUp,
   Package,
   Plus,
+  Edit,
+  Trash2,
 } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import SectionHeader from "@/components/dashboard/SectionHeader";
@@ -20,7 +22,12 @@ import { SkeletonRow } from "@/components/dashboard/DashboardSkeletons";
 import { formatDate } from "@/components/dashboard/utils";
 import VendorModal from "@/components/vendor/Modal";
 import CreateCategory from "@/forms/categories/CreateCategory";
+import UpdateCategory from "@/forms/categories/UpdateCategory";
 import CreateSubCategory from "@/forms/subcategories/CreateSubCategory";
+import UpdateSubCategory from "@/forms/subcategories/UpdateSubCategory";
+import CreatePickupStation from "@/forms/pickupstations/CreatePickupStation";
+import UpdatePickupStation from "@/forms/pickupstations/UpdatePickupStation";
+import UpdateShopForm from "@/forms/shop/UpdateShop";
 
 // --- Main Page ---
 
@@ -30,13 +37,23 @@ export default function VendorDashboard() {
   // Modal States
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isSubCategoryModalOpen, setIsSubCategoryModalOpen] = useState(false);
+  const [isUpdateCategoryModalOpen, setIsUpdateCategoryModalOpen] = useState(false);
+  const [isUpdateSubCategoryModalOpen, setIsUpdateSubCategoryModalOpen] = useState(false);
+  const [isPickupStationModalOpen, setIsPickupStationModalOpen] = useState(false);
+  const [isUpdatePickupStationModalOpen, setIsUpdatePickupStationModalOpen] = useState(false);
+  const [isShopUpdateModalOpen, setIsShopUpdateModalOpen] = useState(false);
+
+  // Selected Item States
+  const [selectedCategoryReference, setSelectedCategoryReference] = useState("");
+  const [selectedSubCategoryReference, setSelectedSubCategoryReference] = useState("");
+  const [selectedPickupStationCode, setSelectedPickupStationCode] = useState("");
 
   const { data: vendor, isLoading: isLoadingVendor } = useFetchAccount();
   const { data: categories, isLoading: isLoadingCategories, refetch: refetchCategories } =
     useFetchCategories();
   const { data: subcategories, isLoading: isLoadingSubcategories, refetch: refetchSubcategories } =
     useFetchSubCategories();
-  const { data: pickupStations, isLoading: isLoadingPickupStations } =
+  const { data: pickupStations, isLoading: isLoadingPickupStations, refetch: refetchPickupStations } =
     useFetchPickupStations();
 
   const tabs = [
@@ -128,11 +145,18 @@ export default function VendorDashboard() {
 
               {/* Shop Information */}
               <div className="bg-white border border-secondary/30 rounded-sm overflow-hidden shadow-sm">
-                <div className="p-6 border-b border-secondary/20 bg-secondary/5">
+                <div className="p-6 border-b border-secondary/20 bg-secondary/5 flex justify-between items-center">
                   <h3 className="font-serif text-lg text-foreground flex items-center gap-2">
                     <UserIcon className="w-5 h-5 text-primary" />
                     Shop Profile
                   </h3>
+                  <button
+                    onClick={() => setIsShopUpdateModalOpen(true)}
+                    className="text-xs flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <Edit className="w-3 h-3" />
+                    Edit Details
+                  </button>
                 </div>
                 <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                   {[
@@ -211,6 +235,9 @@ export default function VendorDashboard() {
                         <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-serif text-primary">
                           Subcategories
                         </th>
+                        <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-serif text-primary">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-secondary/10">
@@ -239,6 +266,18 @@ export default function VendorDashboard() {
                             </td>
                             <td className="px-6 py-4 text-sm text-foreground/60">
                               {cat.subcategories.length} items
+                            </td>
+                            <td className="px-6 py-4">
+                              <button
+                                onClick={() => {
+                                  setSelectedCategoryReference(cat.reference);
+                                  setIsUpdateCategoryModalOpen(true);
+                                }}
+                                className="text-foreground/50 hover:text-primary transition-colors"
+                                title="Edit Category"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
                             </td>
                           </tr>
                         ))
@@ -291,6 +330,9 @@ export default function VendorDashboard() {
                         <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-serif text-primary">
                           Created
                         </th>
+                        <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-serif text-primary">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-secondary/10">
@@ -320,6 +362,18 @@ export default function VendorDashboard() {
                             <td className="px-6 py-4 text-xs text-foreground/60">
                               {formatDate(sub.created_at)}
                             </td>
+                            <td className="px-6 py-4">
+                              <button
+                                onClick={() => {
+                                  setSelectedSubCategoryReference(sub.reference);
+                                  setIsUpdateSubCategoryModalOpen(true);
+                                }}
+                                className="text-foreground/50 hover:text-primary transition-colors"
+                                title="Edit Subcategory"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                            </td>
                           </tr>
                         ))
                       ) : (
@@ -341,10 +395,19 @@ export default function VendorDashboard() {
 
           {activeTab === "pickup-stations" && (
             <div className="animate-in fade-in duration-500">
-              <SectionHeader
-                title="Pickup Stations"
-                description="Customer delivery points and their operational status."
-              />
+              <div className="flex justify-between items-start md:items-center mb-6">
+                <SectionHeader
+                  title="Pickup Stations"
+                  description="Customer delivery points and their operational status."
+                />
+                <button
+                  onClick={() => setIsPickupStationModalOpen(true)}
+                  className="inline-flex items-center justify-center rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Station
+                </button>
+              </div>
               <div className="bg-white border border-secondary/30 rounded-sm overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
@@ -361,6 +424,9 @@ export default function VendorDashboard() {
                         </th>
                         <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-serif text-primary">
                           Status
+                        </th>
+                        <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-serif text-primary">
+                          Actions
                         </th>
                       </tr>
                     </thead>
@@ -396,7 +462,7 @@ export default function VendorDashboard() {
                               </div>
                             </td>
                             <td className="px-6 py-4 text-sm font-medium text-foreground">
-                              ${station.cost_to_customer}
+                              {vendor?.shop?.currency || "$"} {station.cost_to_customer}
                             </td>
                             <td className="px-6 py-4">
                               <span
@@ -404,6 +470,18 @@ export default function VendorDashboard() {
                               >
                                 {station.is_active ? "Active" : "Inactive"}
                               </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <button
+                                onClick={() => {
+                                  setSelectedPickupStationCode(station.station_code);
+                                  setIsUpdatePickupStationModalOpen(true);
+                                }}
+                                className="text-foreground/50 hover:text-primary transition-colors"
+                                title="Edit Station"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
                             </td>
                           </tr>
                         ))
@@ -450,6 +528,86 @@ export default function VendorDashboard() {
               refetchSubcategories();
             }}
           />
+        </VendorModal>
+
+        <VendorModal
+          isOpen={isShopUpdateModalOpen}
+          onClose={() => setIsShopUpdateModalOpen(false)}
+          title="Update Shop Details"
+        >
+          <UpdateShopForm
+            onSuccess={() => {
+              setIsShopUpdateModalOpen(false);
+              // Optimistically update or rely on global state update if using context,
+              // or refetch if we had a refetch function for account/shop.
+              // useFetchAccount typically refetches on window focus, but we can't force refetch easily without queryClient.
+              // For now, reload window or just close. Ideally invalidate 'account' query.
+              window.location.reload();
+            }}
+          />
+        </VendorModal>
+
+        <VendorModal
+          isOpen={isUpdateCategoryModalOpen}
+          onClose={() => setIsUpdateCategoryModalOpen(false)}
+          title="Update Category"
+        >
+          {selectedCategoryReference && (
+            <UpdateCategory
+              reference={selectedCategoryReference}
+              onSuccess={() => {
+                setIsUpdateCategoryModalOpen(false);
+                refetchCategories();
+              }}
+            />
+          )}
+        </VendorModal>
+
+        <VendorModal
+          isOpen={isUpdateSubCategoryModalOpen}
+          onClose={() => setIsUpdateSubCategoryModalOpen(false)}
+          title="Update Subcategory"
+        >
+          {selectedSubCategoryReference && (
+            <UpdateSubCategory
+              reference={selectedSubCategoryReference}
+              onSuccess={() => {
+                setIsUpdateSubCategoryModalOpen(false);
+                refetchSubcategories();
+              }}
+            />
+          )}
+        </VendorModal>
+
+        <VendorModal
+          isOpen={isPickupStationModalOpen}
+          onClose={() => setIsPickupStationModalOpen(false)}
+          title="Create New Pickup Station"
+        >
+          <CreatePickupStation
+            currency={vendor?.shop?.currency || "$"}
+            onSuccess={() => {
+              setIsPickupStationModalOpen(false);
+              refetchPickupStations();
+            }}
+          />
+        </VendorModal>
+
+        <VendorModal
+          isOpen={isUpdatePickupStationModalOpen}
+          onClose={() => setIsUpdatePickupStationModalOpen(false)}
+          title="Update Pickup Station"
+        >
+          {selectedPickupStationCode && (
+            <UpdatePickupStation
+              station_code={selectedPickupStationCode}
+              currency={vendor?.shop?.currency || "$"}
+              onSuccess={() => {
+                setIsUpdatePickupStationModalOpen(false);
+                refetchPickupStations();
+              }}
+            />
+          )}
         </VendorModal>
       </div>
     </div>

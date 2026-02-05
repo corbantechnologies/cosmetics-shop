@@ -42,10 +42,10 @@ export const getPickupStations = async (): Promise<PickupStation[]> => {
 };
 
 export const getPickupStation = async (
-    reference: string,
+    station_code: string,
 ): Promise<PickupStation> => {
     const response: AxiosResponse<PickupStation> = await apiActions.get(
-        `/api/v1/pickupstations/${reference}/`
+        `/api/v1/pickupstations/${station_code}/`
     );
     return response.data;
 };
@@ -64,12 +64,12 @@ export const createPickupStation = async (
 };
 
 export const updatePickupStation = async (
-    reference: string,
+    station_code: string,
     data: updatePickupStation,
     headers: { headers: { Authorization: string } }
 ): Promise<PickupStation> => {
     const response: AxiosResponse<PickupStation> = await apiActions.patch(
-        `/api/v1/pickupstations/${reference}/`,
+        `/api/v1/pickupstations/${station_code}/`,
         data,
         headers
     );
@@ -77,11 +77,11 @@ export const updatePickupStation = async (
 };
 
 export const deletePickupStation = async (
-    reference: string,
+    station_code: string,
     headers: { headers: { Authorization: string } }
 ): Promise<PickupStation> => {
     const response: AxiosResponse<PickupStation> = await apiActions.delete(
-        `/api/v1/pickupstations/${reference}/`,
+        `/api/v1/pickupstations/${station_code}/`,
         headers
     );
     return response.data;

@@ -9,6 +9,7 @@ export interface Product {
     shop_details: {
         shop_code: string;
         name: string;
+        currency: string;
         logo: string | null;
     };
     product_code: string;

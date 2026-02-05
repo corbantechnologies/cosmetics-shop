@@ -13,6 +13,7 @@ export interface Category {
     shop_details: {
         shop_code: string;
         name: string;
+        currency: string;
         logo: string | null;
     };
     created_at: string;
