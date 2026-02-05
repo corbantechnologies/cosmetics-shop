@@ -1,27 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
-import {
-  updateProductVariant,
-  ProductVariant,
-} from "@/services/productvariants";
+import { createProductVariant } from "@/services/productvariants";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import toast from "react-hot-toast";
 import { Loader2, Plus, X } from "lucide-react";
 
-interface UpdateProductVariantProps {
-  variant: ProductVariant;
-  productCode: string; // Required by backend interface
+interface CreateProductVariantProps {
+  productCode: string;
   onSuccess: () => void;
 }
 
-export default function UpdateProductVariant({
-  variant,
+export default function CreateProductVariant({
   productCode,
   onSuccess,
-}: UpdateProductVariantProps) {
+}: CreateProductVariantProps) {
   const authHeaders = useAxiosAuth();
   const [loading, setLoading] = useState(false);
 
@@ -30,21 +25,11 @@ export default function UpdateProductVariant({
     { key: string; value: string }[]
   >([]);
 
-  useEffect(() => {
-    if (variant && variant.attributes) {
-      const attrs = Object.entries(variant.attributes).map(([key, value]) => ({
-        key,
-        value: String(value),
-      }));
-      setAttributeList(attrs);
-    }
-  }, [variant]);
-
   const formik = useFormik({
     initialValues: {
-      price: variant.price || "",
-      stock: variant.stock || 0,
-      // image: null, // Image update to be handled separately or added later if needed
+      price: "",
+      stock: 0,
+      // image: null, // Image creation to be handled separately or added later if needed
     },
     onSubmit: async (values) => {
       setLoading(true);
@@ -64,33 +49,19 @@ export default function UpdateProductVariant({
         formData.append("product", productCode);
         formData.append("price", String(values.price));
         formData.append("stock", String(values.stock));
-
-        // Append attributes as JSON string or individual keys?
-        // Usually multipart/form-data struggles with nested JSON.
-        // The backend likely expects a JSON string for 'attributes' if it's a single field,
-        // OR dot notation if it parses it.
-        // Re-reading service: interface has `attributes: {}`.
-        // Let's try sending as JSON string first if backend calls `json.loads`.
-        // IF backend is DRF with standard parsers, it might need specific handling.
-        // Safest for now: stringify it.
         formData.append("attributes", JSON.stringify(attributesObj));
 
-        // Note: updateProductVariant service signature expects `updateProductVariant` object,
-        // but implementation uses `apiMultipartActions.patch`.
-        // We cast to any to bypass strict type checking if we pass FormData,
-        // or we update service signature.
-        // For now, let's update the service to accept FormData like we did for products.
+        // Explicitly append null or empty for image if required by backend,
+        // or just omit if optional. The interface suggests File | null.
+        // Start with omitting.
 
-        await updateProductVariant(
-          variant.reference,
-          formData as any,
-          authHeaders,
-        );
+        // Cast to any to bypass strict type matching if service expects object but we pass FormData
+        await createProductVariant(formData as any, authHeaders);
 
-        toast.success("Variant updated successfully");
+        toast.success("Variant created successfully");
         onSuccess();
       } catch (error) {
-        toast.error("Failed to update variant");
+        toast.error("Failed to create variant");
         console.error(error);
       } finally {
         setLoading(false);
@@ -130,6 +101,7 @@ export default function UpdateProductVariant({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.price}
+            placeholder="0.00"
             className="w-full px-4 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
           />
         </div>
@@ -144,11 +116,11 @@ export default function UpdateProductVariant({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.stock}
+            placeholder="0"
             className="w-full px-4 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
           />
         </div>
       </div>
-
 
       <div>
         <div className="flex items-center justify-between mb-2">
@@ -202,7 +174,7 @@ export default function UpdateProductVariant({
         className="w-full py-2 px-4 bg-primary text-primary-foreground font-medium rounded-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
       >
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {loading ? "Updating..." : "Update Variant"}
+        {loading ? "Creating..." : "Create Variant"}
       </button>
     </form>
   );

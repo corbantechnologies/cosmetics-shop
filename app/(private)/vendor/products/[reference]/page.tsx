@@ -9,6 +9,11 @@ import VendorModal from "@/components/vendor/Modal";
 import UploadProductImages from "@/forms/products/UploadProductImages";
 import UpdateProduct from "@/forms/products/UpdateProduct";
 import UpdateProductVariant from "@/forms/products/UpdateProductVariant";
+import CreateProductVariant from "@/forms/products/CreateProductVariant";
+import { updateProduct } from "@/services/products";
+import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
+import toast from "react-hot-toast";
+
 import {
   Edit,
   Package,
@@ -17,6 +22,8 @@ import {
   ArrowLeft,
   ImageIcon,
   Plus,
+  Rocket,
+  Loader2,
 } from "lucide-react";
 import { ProductVariant } from "@/services/productvariants";
 
@@ -24,6 +31,7 @@ export default function ProductPage() {
   const params = useParams();
   const router = useRouter();
   const reference = params.reference as string;
+  const authHeaders = useAxiosAuth();
   const { data: vendor } = useFetchAccount();
   const {
     data: product,
@@ -35,11 +43,14 @@ export default function ProductPage() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // Variant Edit State
+  // Variant State
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [isCreateVariantModalOpen, setIsCreateVariantModalOpen] =
+    useState(false);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null,
   );
+  const [publishing, setPublishing] = useState(false);
 
   const handleEditVariant = (variant: ProductVariant) => {
     setSelectedVariant(variant);
@@ -49,6 +60,41 @@ export default function ProductPage() {
   const handleCloseVariantModal = () => {
     setSelectedVariant(null);
     setIsVariantModalOpen(false);
+  };
+
+  const handlePublish = async () => {
+    if (!product) return;
+    setPublishing(true);
+    try {
+      // Toggle is_active status or set to true?
+      // The request implies "Publish" which typically means changing from draft (false) to active (true).
+      // If already active, maybe unpublish? For now let's safely toggle or ensure true.
+      // Let's assume the button is for Publishing (becoming active).
+
+      const newStatus = !product.is_active;
+
+      await updateProduct(
+        reference,
+        {
+          ...product,
+          is_active: newStatus,
+          // Backend likely needs these fields to prevent clearing, based on previous experience
+          sub_categories: product.sub_category?.map((s) => s.name) || [],
+          tags: product.tags || [],
+        },
+        authHeaders,
+      );
+
+      toast.success(
+        newStatus ? "Product published successfully" : "Product unpublished",
+      );
+      refetch();
+    } catch (error) {
+      toast.error("Failed to update product status");
+      console.error(error);
+    } finally {
+      setPublishing(false);
+    }
   };
 
   if (isLoading) {
@@ -119,17 +165,35 @@ export default function ProductPage() {
               Code: {product.product_code}
             </p>
           </div>
-          <button
-            onClick={() => setIsEditModalOpen(true)}
-            className="inline-flex items-center justify-center rounded-sm border border-secondary bg-white px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-secondary/5"
-          >
-            <Edit className="mr-2 h-4 w-4" />
-            Edit Product
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handlePublish}
+              disabled={publishing}
+              className={`inline-flex items-center justify-center rounded-sm px-4 py-2 text-sm font-medium shadow-sm transition-colors ${
+                product.is_active
+                  ? "bg-white text-red-600 border border-red-200 hover:bg-red-50"
+                  : "bg-primary text-primary-foreground hover:bg-primary/90"
+              }`}
+            >
+              {publishing ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Rocket className="mr-2 h-4 w-4" />
+              )}
+              {product.is_active ? "Unpublish" : "Publish Product"}
+            </button>
+            <button
+              onClick={() => setIsEditModalOpen(true)}
+              className="inline-flex items-center justify-center rounded-sm border border-secondary bg-white px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-secondary/5"
+            >
+              <Edit className="mr-2 h-4 w-4" />
+              Edit
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column: Images & Description */}
+          {/* Left Column: Images & Variants */}
           <div className="lg:col-span-2 space-y-8">
             {/* Images */}
             <div className="bg-white border border-secondary/30 rounded-sm p-6 shadow-sm">
@@ -183,6 +247,13 @@ export default function ProductPage() {
                   <Package className="w-4 h-4 mr-2 text-primary" />
                   Variants & Pricing
                 </h3>
+                <button
+                  onClick={() => setIsCreateVariantModalOpen(true)}
+                  className="text-xs flex items-center bg-primary/10 text-primary px-2 py-1 rounded-sm hover:bg-primary/20 transition-colors"
+                >
+                  <Plus className="w-3 h-3 mr-1" />
+                  Add Variant
+                </button>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
@@ -389,6 +460,21 @@ export default function ProductPage() {
               }}
             />
           )}
+        </VendorModal>
+
+        {/* Create Variant Modal */}
+        <VendorModal
+          isOpen={isCreateVariantModalOpen}
+          onClose={() => setIsCreateVariantModalOpen(false)}
+          title="Add New Variant"
+        >
+          <CreateProductVariant
+            productCode={product.product_code}
+            onSuccess={() => {
+              setIsCreateVariantModalOpen(false);
+              if (refetch) refetch();
+            }}
+          />
         </VendorModal>
       </div>
     </div>

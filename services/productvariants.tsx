@@ -58,7 +58,7 @@ export const getProductVariant = async (
 };
 
 export const createProductVariant = async (
-  data: createProductVariant,
+  data: createProductVariant | FormData,
   headers: { headers: { Authorization: string } },
 ): Promise<ProductVariant> => {
   const response: AxiosResponse<ProductVariant> =
