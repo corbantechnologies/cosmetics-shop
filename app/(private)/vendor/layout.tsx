@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import VendorNavbar from "@/components/vendor/Navbar";
 import { useFetchAccount } from "@/hooks/accounts/actions";
 import { Loader2 } from "lucide-react";
@@ -11,21 +12,22 @@ export default function VendorLayout({
 }: {
     children: React.ReactNode;
 }) {
+    const { data: session, status } = useSession();
     const { data: vendor, isLoading, isError } = useFetchAccount();
     const router = useRouter();
 
     useEffect(() => {
-        if (!isLoading) {
-            if (vendor) {
-                if (!vendor.is_vendor && !vendor.is_superuser) {
-                    router.push("/login");
-                }
-            } else if (!isError) {
-                // Redirect only if no error (meaning successful fetch but no data, which implies unauthenticated or empty)
+        if (status === "unauthenticated") {
+            router.push("/login");
+        } else if (status === "authenticated" && !isLoading && vendor) {
+            if (!vendor.is_vendor && !vendor.is_superuser) {
+                // If loaded and NOT a vendor, redirect or show message. 
+                // Redirecting to login might be confusing if they are logged in as a customer.
+                // But per requirements, they shouldn't be here.
                 router.push("/login");
             }
         }
-    }, [vendor, isLoading, isError, router]);
+    }, [status, vendor, isLoading, router]);
 
     if (isLoading) {
         return (
