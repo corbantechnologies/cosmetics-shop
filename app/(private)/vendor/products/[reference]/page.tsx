@@ -4,12 +4,11 @@ import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useFetchProductVendor } from "@/hooks/products/actions";
 import { useFetchAccount } from "@/hooks/accounts/actions";
-import SectionHeader from "@/components/dashboard/SectionHeader";
-import { SkeletonRow } from "@/components/dashboard/DashboardSkeletons";
 import { formatDate } from "@/components/dashboard/utils";
 import VendorModal from "@/components/vendor/Modal";
 import UploadProductImages from "@/forms/products/UploadProductImages";
 import UpdateProduct from "@/forms/products/UpdateProduct";
+import UpdateProductVariant from "@/forms/products/UpdateProductVariant";
 import {
   Edit,
   Package,
@@ -19,6 +18,7 @@ import {
   ImageIcon,
   Plus,
 } from "lucide-react";
+import { ProductVariant } from "@/services/productvariants";
 
 export default function ProductPage() {
   const params = useParams();
@@ -31,8 +31,25 @@ export default function ProductPage() {
     isError,
     refetch,
   } = useFetchProductVendor(reference);
+
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // Variant Edit State
+  const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    null,
+  );
+
+  const handleEditVariant = (variant: ProductVariant) => {
+    setSelectedVariant(variant);
+    setIsVariantModalOpen(true);
+  };
+
+  const handleCloseVariantModal = () => {
+    setSelectedVariant(null);
+    setIsVariantModalOpen(false);
+  };
 
   if (isLoading) {
     return (
@@ -183,6 +200,9 @@ export default function ProductPage() {
                       <th className="px-6 py-3 text-[10px] uppercase tracking-[0.2em] font-medium text-muted-foreground text-right">
                         Stock
                       </th>
+                      <th className="px-6 py-3 text-[10px] uppercase tracking-[0.2em] font-medium text-muted-foreground text-right">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-secondary/10">
@@ -190,7 +210,7 @@ export default function ProductPage() {
                       product.variants.map((variant) => (
                         <tr
                           key={variant.id}
-                          className="hover:bg-secondary/5 transition-colors"
+                          className="hover:bg-secondary/5 transition-colors group"
                         >
                           <td className="px-6 py-4 text-sm font-medium text-foreground">
                             {Object.entries(variant.attributes).map(
@@ -221,12 +241,21 @@ export default function ProductPage() {
                           <td className="px-6 py-4 text-sm text-foreground text-right">
                             {variant.stock}
                           </td>
+                          <td className="px-6 py-4 text-sm text-foreground text-right">
+                            <button
+                              onClick={() => handleEditVariant(variant)}
+                              className="text-primary hover:text-primary/80 transition-colors p-1"
+                              title="Edit Variant"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                          </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
                         <td
-                          colSpan={4}
+                          colSpan={5}
                           className="px-6 py-8 text-center text-sm text-muted-foreground"
                         >
                           No variants found.
@@ -342,6 +371,24 @@ export default function ProductPage() {
               if (refetch) refetch();
             }}
           />
+        </VendorModal>
+
+        {/* Variant Edit Modal */}
+        <VendorModal
+          isOpen={isVariantModalOpen}
+          onClose={handleCloseVariantModal}
+          title="Edit Variant"
+        >
+          {selectedVariant && (
+            <UpdateProductVariant
+              variant={selectedVariant}
+              productCode={product.product_code}
+              onSuccess={() => {
+                handleCloseVariantModal();
+                if (refetch) refetch();
+              }}
+            />
+          )}
         </VendorModal>
       </div>
     </div>
