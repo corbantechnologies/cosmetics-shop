@@ -44,20 +44,20 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-12">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8">
-          <div>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8 mb-8">
+          <div className="flex-1">
             <span className="text-[10px] md:text-xs uppercase tracking-[0.2em] text-primary mb-2 block font-medium">
               Product Management
             </span>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif text-foreground leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-foreground leading-tight">
               Products
             </h1>
           </div>
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="inline-flex items-center justify-center rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            className="w-full md:w-auto inline-flex items-center justify-center rounded-sm bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add Product
@@ -66,7 +66,7 @@ export default function ProductsPage() {
 
         {/* Filters & Search */}
         <div className="bg-white border border-secondary/30 rounded-sm p-4 mb-6 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full md:w-96">
+          <div className="relative w-full md:max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
             <input
               type="text"
