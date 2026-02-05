@@ -11,18 +11,21 @@ export default function VendorLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { data: vendor, isLoading } = useFetchAccount();
+    const { data: vendor, isLoading, isError } = useFetchAccount();
     const router = useRouter();
 
     useEffect(() => {
-        if (!isLoading && vendor) {
-            if (!vendor.is_vendor && !vendor.is_superuser) {
+        if (!isLoading) {
+            if (vendor) {
+                if (!vendor.is_vendor && !vendor.is_superuser) {
+                    router.push("/login");
+                }
+            } else if (!isError) {
+                // Redirect only if no error (meaning successful fetch but no data, which implies unauthenticated or empty)
                 router.push("/login");
             }
-        } else if (!isLoading && !vendor) {
-            router.push("/login");
         }
-    }, [vendor, isLoading, router]);
+    }, [vendor, isLoading, isError, router]);
 
     if (isLoading) {
         return (
@@ -30,6 +33,21 @@ export default function VendorLayout({
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
         );
+    }
+
+    if (isError) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4 text-center">
+                <h2 className="text-xl font-semibold mb-2">Unable to load account</h2>
+                <p className="text-muted-foreground mb-4">Please try refreshing the page or logging in again.</p>
+                <button
+                    onClick={() => router.push("/login")}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-sm"
+                >
+                    Back to Login
+                </button>
+            </div>
+        )
     }
 
     if (!vendor?.is_vendor && !vendor?.is_superuser) {

@@ -5,6 +5,7 @@ import { useFetchAccount } from "@/hooks/accounts/actions";
 import { useFetchCategories } from "@/hooks/categories/actions";
 import { useFetchSubCategories } from "@/hooks/subcategories/actions";
 import { useFetchPickupStations } from "@/hooks/pickupstations/actions";
+import { useFetchShop } from "@/hooks/shops/actions";
 import {
   LayoutGrid,
   ListTree,
@@ -55,6 +56,8 @@ export default function VendorDashboard() {
     useFetchSubCategories();
   const { data: pickupStations, isLoading: isLoadingPickupStations, refetch: refetchPickupStations } =
     useFetchPickupStations();
+
+  const { data: shopData, refetch: refetchShop } = useFetchShop(vendor?.shop?.shop_code || "");
 
   const tabs = [
     { id: "overview", label: "Overview", icon: TrendingUp },
@@ -162,27 +165,27 @@ export default function VendorDashboard() {
                   {[
                     {
                       label: "Shop Name",
-                      value: vendor?.shop?.name || "N/A",
+                      value: shopData?.name || vendor?.shop?.name || "N/A",
                     },
                     {
                       label: "Shop Email",
-                      value: vendor?.shop?.email || "N/A"
+                      value: shopData?.email || vendor?.shop?.email || "N/A"
                     },
                     {
                       label: "Shop Code",
-                      value: vendor?.shop?.shop_code || "N/A"
+                      value: shopData?.shop_code || vendor?.shop?.shop_code || "N/A"
                     },
                     {
                       label: "Country",
-                      value: vendor?.shop?.country || "N/A",
+                      value: shopData?.country || vendor?.shop?.country || "N/A",
                     },
                     {
                       label: "Registration Date",
-                      value: vendor?.shop?.created_at ? formatDate(vendor.shop.created_at) : "N/A",
+                      value: shopData?.created_at ? formatDate(shopData.created_at) : (vendor?.shop?.created_at ? formatDate(vendor.shop.created_at) : "N/A"),
                     },
                     {
                       label: "Reference ID",
-                      value: vendor?.shop?.reference || "N/A",
+                      value: shopData?.reference || vendor?.shop?.reference || "N/A",
                     },
                   ].map((field, i) => (
                     <div key={i}>
@@ -538,11 +541,7 @@ export default function VendorDashboard() {
           <UpdateShopForm
             onSuccess={() => {
               setIsShopUpdateModalOpen(false);
-              // Optimistically update or rely on global state update if using context,
-              // or refetch if we had a refetch function for account/shop.
-              // useFetchAccount typically refetches on window focus, but we can't force refetch easily without queryClient.
-              // For now, reload window or just close. Ideally invalidate 'account' query.
-              window.location.reload();
+              if (refetchShop) refetchShop();
             }}
           />
         </VendorModal>

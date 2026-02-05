@@ -1,7 +1,7 @@
 "use client"
 
 import { Category } from "./categories";
-import { apiActions } from "@/tools/axios";
+import { apiActions, apiMultipartActions } from "@/tools/axios";
 import { AxiosResponse } from "axios";
 import { PaginatedResponse } from "./general";
 
@@ -30,8 +30,8 @@ export interface updateShop {
     name: string;
     currency: string;
     description: string;
-    logo: string;
-    banner: string;
+    logo: File | any;
+    banner: File | any;
     address: string;
     city: string;
     state: string;
@@ -60,10 +60,10 @@ export const getShop = async (
 // Authenticated
 export const updateShop = async (
     shop_code: string,
-    data: updateShop,
+    data: updateShop | FormData,
     headers: { headers: { Authorization: string } }
 ): Promise<Shop> => {
-    const response: AxiosResponse<Shop> = await apiActions.patch(
+    const response: AxiosResponse<Shop> = await apiMultipartActions.patch(
         `/api/v1/shops/${shop_code}/`,
         data,
         headers

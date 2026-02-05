@@ -22,8 +22,8 @@ export default function UpdateShopForm({ onSuccess }: UpdateShopFormProps) {
         initialValues: {
             name: shop?.name || "",
             description: shop?.description || "",
-            logo: shop?.logo || "",
-            banner: shop?.banner || "",
+            logo: shop?.logo || null,
+            banner: shop?.banner || null,
             address: shop?.address || "",
             city: shop?.city || "",
             state: shop?.state || "",
@@ -42,7 +42,25 @@ export default function UpdateShopForm({ onSuccess }: UpdateShopFormProps) {
 
             setLoading(true);
             try {
-                await updateShop(shop.shop_code, values, authHeaders);
+                const formData = new FormData();
+                formData.append("name", values.name);
+                formData.append("description", values.description);
+                if (values.logo instanceof File) {
+                    formData.append("logo", values.logo);
+                }
+                if (values.banner instanceof File) {
+                    formData.append("banner", values.banner);
+                }
+                formData.append("address", values.address);
+                formData.append("city", values.city);
+                formData.append("state", values.state);
+                formData.append("zip_code", values.zip_code);
+                formData.append("country", values.country);
+                formData.append("phone", values.phone);
+                formData.append("email", values.email);
+                formData.append("currency", values.currency);
+
+                await updateShop(shop.shop_code, formData, authHeaders);
                 toast.success("Shop details updated successfully");
                 if (onSuccess) onSuccess();
             } catch (error) {
@@ -130,6 +148,48 @@ export default function UpdateShopForm({ onSuccess }: UpdateShopFormProps) {
                         value={formik.values.description}
                         className="w-full px-3 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
                     />
+                </div>
+
+                <div className="space-y-2">
+                    <label htmlFor="logo" className="text-sm font-medium text-foreground">
+                        Logo
+                    </label>
+                    <input
+                        id="logo"
+                        name="logo"
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) => {
+                            if (event.currentTarget.files) {
+                                formik.setFieldValue("logo", event.currentTarget.files[0]);
+                            }
+                        }}
+                        className="w-full px-3 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                    {shop?.logo && typeof formik.values.logo === 'string' && (
+                        <p className="text-xs text-muted-foreground mt-1">Current: {shop.logo.split('/').pop()}</p>
+                    )}
+                </div>
+
+                <div className="space-y-2">
+                    <label htmlFor="banner" className="text-sm font-medium text-foreground">
+                        Banner
+                    </label>
+                    <input
+                        id="banner"
+                        name="banner"
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) => {
+                            if (event.currentTarget.files) {
+                                formik.setFieldValue("banner", event.currentTarget.files[0]);
+                            }
+                        }}
+                        className="w-full px-3 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                    {shop?.banner && typeof formik.values.banner === 'string' && (
+                        <p className="text-xs text-muted-foreground mt-1">Current: {shop.banner.split('/').pop()}</p>
+                    )}
                 </div>
 
                 <div className="space-y-2">
