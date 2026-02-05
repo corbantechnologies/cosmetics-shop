@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useFetchAccount } from "@/hooks/accounts/actions";
 import { useFetchCategories } from "@/hooks/categories/actions";
 import { useFetchSubCategories } from "@/hooks/subcategories/actions";
@@ -15,7 +15,6 @@ import {
   Package,
   Plus,
   Edit,
-  Trash2,
 } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import SectionHeader from "@/components/dashboard/SectionHeader";
@@ -29,6 +28,7 @@ import UpdateSubCategory from "@/forms/subcategories/UpdateSubCategory";
 import CreatePickupStation from "@/forms/pickupstations/CreatePickupStation";
 import UpdatePickupStation from "@/forms/pickupstations/UpdatePickupStation";
 import UpdateShopForm from "@/forms/shop/UpdateShop";
+import { useFetchProductsVendor } from "@/hooks/products/actions";
 
 // --- Main Page ---
 
@@ -38,26 +38,49 @@ export default function VendorDashboard() {
   // Modal States
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isSubCategoryModalOpen, setIsSubCategoryModalOpen] = useState(false);
-  const [isUpdateCategoryModalOpen, setIsUpdateCategoryModalOpen] = useState(false);
-  const [isUpdateSubCategoryModalOpen, setIsUpdateSubCategoryModalOpen] = useState(false);
-  const [isPickupStationModalOpen, setIsPickupStationModalOpen] = useState(false);
-  const [isUpdatePickupStationModalOpen, setIsUpdatePickupStationModalOpen] = useState(false);
+  const [isUpdateCategoryModalOpen, setIsUpdateCategoryModalOpen] =
+    useState(false);
+  const [isUpdateSubCategoryModalOpen, setIsUpdateSubCategoryModalOpen] =
+    useState(false);
+  const [isPickupStationModalOpen, setIsPickupStationModalOpen] =
+    useState(false);
+  const [isUpdatePickupStationModalOpen, setIsUpdatePickupStationModalOpen] =
+    useState(false);
   const [isShopUpdateModalOpen, setIsShopUpdateModalOpen] = useState(false);
 
   // Selected Item States
-  const [selectedCategoryReference, setSelectedCategoryReference] = useState("");
-  const [selectedSubCategoryReference, setSelectedSubCategoryReference] = useState("");
-  const [selectedPickupStationCode, setSelectedPickupStationCode] = useState("");
+  const [selectedCategoryReference, setSelectedCategoryReference] =
+    useState("");
+  const [selectedSubCategoryReference, setSelectedSubCategoryReference] =
+    useState("");
+  const [selectedPickupStationCode, setSelectedPickupStationCode] =
+    useState("");
 
   const { data: vendor, isLoading: isLoadingVendor } = useFetchAccount();
-  const { data: categories, isLoading: isLoadingCategories, refetch: refetchCategories } =
-    useFetchCategories();
-  const { data: subcategories, isLoading: isLoadingSubcategories, refetch: refetchSubcategories } =
-    useFetchSubCategories();
-  const { data: pickupStations, isLoading: isLoadingPickupStations, refetch: refetchPickupStations } =
-    useFetchPickupStations();
+  const {
+    data: categories,
+    isLoading: isLoadingCategories,
+    refetch: refetchCategories,
+  } = useFetchCategories();
+  const {
+    data: subcategories,
+    isLoading: isLoadingSubcategories,
+    refetch: refetchSubcategories,
+  } = useFetchSubCategories();
+  const {
+    data: pickupStations,
+    isLoading: isLoadingPickupStations,
+    refetch: refetchPickupStations,
+  } = useFetchPickupStations();
+  const {
+    data: products,
+    isLoading: isLoadingProducts,
+    refetch: refetchProducts,
+  } = useFetchProductsVendor();
 
-  const { data: shopData, refetch: refetchShop } = useFetchShop(vendor?.shop?.shop_code || "");
+  const { data: shopData, refetch: refetchShop } = useFetchShop(
+    vendor?.shop?.shop_code || "",
+  );
 
   const tabs = [
     { id: "overview", label: "Overview", icon: TrendingUp },
@@ -85,7 +108,12 @@ export default function VendorDashboard() {
       icon: MapPin,
       loading: isLoadingPickupStations,
     },
-    { title: "Products", value: 0, icon: Package, loading: false }, // Placeholder for future products
+    {
+      title: "Products",
+      value: products?.length || 0,
+      icon: Package,
+      loading: isLoadingProducts,
+    },
   ];
 
   return (
@@ -121,10 +149,11 @@ export default function VendorDashboard() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 pb-4 text-sm font-medium transition-all relative whitespace-nowrap ${activeTab === tab.id
-                ? "text-primary transition-colors"
-                : "text-foreground/40 hover:text-foreground/70"
-                }`}
+              className={`flex items-center gap-2 pb-4 text-sm font-medium transition-all relative whitespace-nowrap ${
+                activeTab === tab.id
+                  ? "text-primary transition-colors"
+                  : "text-foreground/40 hover:text-foreground/70"
+              }`}
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}
@@ -169,23 +198,30 @@ export default function VendorDashboard() {
                     },
                     {
                       label: "Shop Email",
-                      value: shopData?.email || vendor?.shop?.email || "N/A"
+                      value: shopData?.email || vendor?.shop?.email || "N/A",
                     },
                     {
                       label: "Shop Code",
-                      value: shopData?.shop_code || vendor?.shop?.shop_code || "N/A"
+                      value:
+                        shopData?.shop_code || vendor?.shop?.shop_code || "N/A",
                     },
                     {
                       label: "Country",
-                      value: shopData?.country || vendor?.shop?.country || "N/A",
+                      value:
+                        shopData?.country || vendor?.shop?.country || "N/A",
                     },
                     {
                       label: "Registration Date",
-                      value: shopData?.created_at ? formatDate(shopData.created_at) : (vendor?.shop?.created_at ? formatDate(vendor.shop.created_at) : "N/A"),
+                      value: shopData?.created_at
+                        ? formatDate(shopData.created_at)
+                        : vendor?.shop?.created_at
+                          ? formatDate(vendor.shop.created_at)
+                          : "N/A",
                     },
                     {
                       label: "Reference ID",
-                      value: shopData?.reference || vendor?.shop?.reference || "N/A",
+                      value:
+                        shopData?.reference || vendor?.shop?.reference || "N/A",
                     },
                   ].map((field, i) => (
                     <div key={i}>
@@ -368,7 +404,9 @@ export default function VendorDashboard() {
                             <td className="px-6 py-4">
                               <button
                                 onClick={() => {
-                                  setSelectedSubCategoryReference(sub.reference);
+                                  setSelectedSubCategoryReference(
+                                    sub.reference,
+                                  );
                                   setIsUpdateSubCategoryModalOpen(true);
                                 }}
                                 className="text-foreground/50 hover:text-primary transition-colors"
@@ -465,7 +503,8 @@ export default function VendorDashboard() {
                               </div>
                             </td>
                             <td className="px-6 py-4 text-sm font-medium text-foreground">
-                              {vendor?.shop?.currency || "$"} {station.cost_to_customer}
+                              {vendor?.shop?.currency || "$"}{" "}
+                              {station.cost_to_customer}
                             </td>
                             <td className="px-6 py-4">
                               <span
@@ -477,7 +516,9 @@ export default function VendorDashboard() {
                             <td className="px-6 py-4">
                               <button
                                 onClick={() => {
-                                  setSelectedPickupStationCode(station.station_code);
+                                  setSelectedPickupStationCode(
+                                    station.station_code,
+                                  );
                                   setIsUpdatePickupStationModalOpen(true);
                                 }}
                                 className="text-foreground/50 hover:text-primary transition-colors"
@@ -537,6 +578,7 @@ export default function VendorDashboard() {
           isOpen={isShopUpdateModalOpen}
           onClose={() => setIsShopUpdateModalOpen(false)}
           title="Update Shop Details"
+          maxWidth="max-w-2xl"
         >
           <UpdateShopForm
             onSuccess={() => {
