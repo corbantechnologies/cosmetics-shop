@@ -105,7 +105,7 @@ export default function ProductsPage() {
                                     <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-serif text-primary">
                                         Status
                                     </th>
-                                    <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-serif text-primary">
+                                    <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-serif text-primary hidden md:table-cell">
                                         Date
                                     </th>
                                     <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-serif text-primary text-right">
@@ -160,17 +160,18 @@ export default function ProductsPage() {
                                                     {product.is_active ? "Active" : "Inactive"}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-xs text-foreground/50">
+                                            <td className="px-6 py-4 text-xs text-foreground/50 hidden md:table-cell">
                                                 {formatDate(product.created_at)}
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <button
-                                                        className="p-1 px-2 text-xs md:text-sm text-foreground/50 hover:text-primary transition-colors border border-secondary/20 rounded-sm hover:border-primary/30"
-                                                        title="Edit Product"
+                                                    <Link
+                                                        href={`/vendor/products/${product.reference}`}
+                                                        className="p-1 px-3 text-xs md:text-sm text-foreground/50 hover:text-primary transition-colors border border-secondary/20 rounded-sm hover:border-primary/30 flex items-center"
+                                                        title="Manage Product"
                                                     >
-                                                        Edit
-                                                    </button>
+                                                        Manage
+                                                    </Link>
                                                 </div>
                                             </td>
                                         </tr>
