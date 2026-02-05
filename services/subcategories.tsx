@@ -3,15 +3,22 @@
 import { apiActions } from "@/tools/axios";
 import { AxiosResponse } from "axios";
 import { PaginatedResponse } from "./general";
+import { Product } from "./products";
 
 export interface SubCategory {
     name: string;
     category: string;
-    vendor: string;
+    shop: string;
+    shop_details: {
+        shop_code: string;
+        name: string;
+        logo: string | null;
+    };
     is_active: boolean;
     reference: string;
     created_at: string;
     updated_at: string;
+    products: Product[];
 }
 
 interface createSubCategory {

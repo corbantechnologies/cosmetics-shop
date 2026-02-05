@@ -2,6 +2,7 @@
 
 import { apiActions } from "@/tools/axios";
 import { AxiosResponse } from "axios";
+import { Shop } from "./shops";
 
 export interface User {
   id: string;
@@ -18,6 +19,7 @@ export interface User {
   is_active: boolean;
   is_vendor: boolean;
   is_customer: boolean;
+  shop: Shop | null;
 }
 
 export interface updateUser {

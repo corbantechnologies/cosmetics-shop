@@ -5,15 +5,21 @@ import { AxiosResponse } from "axios";
 import { PaginatedResponse } from "./general";
 import { SubCategory } from "./subcategories";
 
-interface Category {
+export interface Category {
     reference: string;
     name: string;
     is_active: boolean;
-    vendor: string;
+    shop: string;
+    shop_details: {
+        shop_code: string;
+        name: string;
+        logo: string | null;
+    };
     created_at: string;
     updated_at: string;
     subcategories: SubCategory[];
 }
+
 
 interface createCategory {
     name: string;
