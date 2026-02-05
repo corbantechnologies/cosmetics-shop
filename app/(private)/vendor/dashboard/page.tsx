@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useFetchAccount } from "@/hooks/accounts/actions";
-import { useFetchCategories } from "@/hooks/categories/actions";
-import { useFetchSubCategories } from "@/hooks/subcategories/actions";
-import { useFetchPickupStations } from "@/hooks/pickupstations/actions";
+import {  useFetchCategoriesVendor } from "@/hooks/categories/actions";
+import {  useFetchSubCategoriesVendor } from "@/hooks/subcategories/actions";
+import { useFetchPickupStationsVendor } from "@/hooks/pickupstations/actions";
 import { useFetchShop } from "@/hooks/shops/actions";
 import {
   LayoutGrid,
@@ -61,17 +61,17 @@ export default function VendorDashboard() {
     data: categories,
     isLoading: isLoadingCategories,
     refetch: refetchCategories,
-  } = useFetchCategories();
+  } = useFetchCategoriesVendor();
   const {
     data: subcategories,
     isLoading: isLoadingSubcategories,
     refetch: refetchSubcategories,
-  } = useFetchSubCategories();
+  } = useFetchSubCategoriesVendor();
   const {
     data: pickupStations,
     isLoading: isLoadingPickupStations,
     refetch: refetchPickupStations,
-  } = useFetchPickupStations();
+  } = useFetchPickupStationsVendor();
   const {
     data: products,
     isLoading: isLoadingProducts,
