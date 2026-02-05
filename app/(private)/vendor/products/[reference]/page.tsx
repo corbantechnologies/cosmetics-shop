@@ -141,9 +141,9 @@ export default function ProductPage() {
         </button>
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2 flex-wrap">
               <span className="text-[10px] uppercase tracking-[0.2em] text-primary font-medium">
                 Product Details
               </span>
@@ -161,15 +161,15 @@ export default function ProductPage() {
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif text-foreground leading-tight mb-2">
               {product.name}
             </h1>
-            <p className="text-sm font-mono text-muted-foreground">
+            <p className="text-sm font-mono text-muted-foreground break-all">
               Code: {product.product_code}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full md:w-auto">
             <button
               onClick={handlePublish}
               disabled={publishing}
-              className={`inline-flex items-center justify-center rounded-sm px-4 py-2 text-sm font-medium shadow-sm transition-colors ${
+              className={`flex-1 md:flex-none inline-flex items-center justify-center rounded-sm px-4 py-2 text-sm font-medium shadow-sm transition-colors ${
                 product.is_active
                   ? "bg-white text-red-600 border border-red-200 hover:bg-red-50"
                   : "bg-primary text-primary-foreground hover:bg-primary/90"
@@ -180,11 +180,11 @@ export default function ProductPage() {
               ) : (
                 <Rocket className="mr-2 h-4 w-4" />
               )}
-              {product.is_active ? "Unpublish" : "Publish Product"}
+              {product.is_active ? "Unpublish" : "Publish"}
             </button>
             <button
               onClick={() => setIsEditModalOpen(true)}
-              className="inline-flex items-center justify-center rounded-sm border border-secondary bg-white px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-secondary/5"
+              className="flex-1 md:flex-none inline-flex items-center justify-center rounded-sm border border-secondary bg-white px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-secondary/5"
             >
               <Edit className="mr-2 h-4 w-4" />
               Edit
@@ -196,7 +196,7 @@ export default function ProductPage() {
           {/* Left Column: Images & Variants */}
           <div className="lg:col-span-2 space-y-8">
             {/* Images */}
-            <div className="bg-white border border-secondary/30 rounded-sm p-6 shadow-sm">
+            <div className="bg-white border border-secondary/30 rounded-sm p-4 md:p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-serif text-lg flex items-center text-foreground">
                   <ImageIcon className="w-4 h-4 mr-2 text-primary" />

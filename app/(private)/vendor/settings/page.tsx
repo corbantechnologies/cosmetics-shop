@@ -61,7 +61,7 @@ export default function VendorSettings() {
       />
 
       <div className="bg-white border border-secondary/30 rounded-sm overflow-hidden shadow-sm">
-        <div className="p-6 border-b border-secondary/20 bg-secondary/5 flex justify-between items-center">
+        <div className="p-4 md:p-6 border-b border-secondary/20 bg-secondary/5 flex justify-between items-center">
           <h3 className="font-serif text-lg text-foreground flex items-center gap-2">
             <User className="w-5 h-5 text-primary" />
             Personal Profile
@@ -75,7 +75,7 @@ export default function VendorSettings() {
           </button>
         </div>
 
-        <div className="p-6 sm:p-8">
+        <div className="p-4 md:p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
             {profileFields.map((field, i) => (
               <div

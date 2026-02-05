@@ -118,21 +118,21 @@ export default function VendorDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-12">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-12">
-          <div>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8 mb-8 md:mb-12">
+          <div className="flex-1">
             <span className="text-[10px] md:text-xs uppercase tracking-[0.2em] text-primary mb-2 block font-medium">
               Vendor Portal
             </span>
-            <h1 className="text-2xl sm:text-3xl md:text-5xl font-serif text-foreground leading-tight">
-              Welcome back,{" "}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-foreground leading-tight">
+              Welcome back, <br className="hidden sm:block" />
               <span className="italic text-primary">
                 {vendor?.first_name || "Merchant"}
               </span>
             </h1>
           </div>
-          <div className="flex items-center gap-2 text-xs md:text-sm text-foreground/50 border-b border-secondary/30 pb-1 w-fit">
+          <div className="flex items-center gap-2 text-xs md:text-sm text-foreground/50 border-b border-secondary/30 pb-1 w-fit self-start md:self-auto">
             <TrendingUp className="w-3.5 h-3.5 md:w-4 md:h-4" />
             <span>Account Status: </span>
             <span
