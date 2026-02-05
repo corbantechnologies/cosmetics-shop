@@ -93,11 +93,10 @@ export default function VendorDashboard() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 pb-4 text-sm font-medium transition-all relative whitespace-nowrap ${
-                activeTab === tab.id
+              className={`flex items-center gap-2 pb-4 text-sm font-medium transition-all relative whitespace-nowrap ${activeTab === tab.id
                   ? "text-primary transition-colors"
                   : "text-foreground/40 hover:text-foreground/70"
-              }`}
+                }`}
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}
@@ -119,33 +118,39 @@ export default function VendorDashboard() {
                 ))}
               </div>
 
-              {/* Vendor Information */}
+              {/* Shop Information */}
               <div className="bg-white border border-secondary/30 rounded-sm overflow-hidden shadow-sm">
                 <div className="p-6 border-b border-secondary/20 bg-secondary/5">
                   <h3 className="font-serif text-lg text-foreground flex items-center gap-2">
                     <UserIcon className="w-5 h-5 text-primary" />
-                    Business Profile
+                    Shop Profile
                   </h3>
                 </div>
                 <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                   {[
                     {
-                      label: "Full Name",
-                      value: `${vendor?.first_name} ${vendor?.last_name}`,
-                    },
-                    { label: "Business Email", value: vendor?.email },
-                    { label: "Vendor Code", value: vendor?.usercode },
-                    {
-                      label: "Location",
-                      value: `${vendor?.town}, ${vendor?.county}, ${vendor?.country}`,
+                      label: "Shop Name",
+                      value: vendor?.shop?.name || "N/A",
                     },
                     {
-                      label: "Phone",
-                      value: vendor?.phone_number || "Not provided",
+                      label: "Shop Email",
+                      value: vendor?.shop?.email || "N/A"
                     },
                     {
-                      label: "Role",
-                      value: vendor?.is_superuser ? "Super Admin" : "Vendor",
+                      label: "Shop Code",
+                      value: vendor?.shop?.shop_code || "N/A"
+                    },
+                    {
+                      label: "Country",
+                      value: vendor?.shop?.country || "N/A",
+                    },
+                    {
+                      label: "Registration Date",
+                      value: vendor?.shop?.created_at ? formatDate(vendor.shop.created_at) : "N/A",
+                    },
+                    {
+                      label: "Reference ID",
+                      value: vendor?.shop?.reference || "N/A",
                     },
                   ].map((field, i) => (
                     <div key={i}>
