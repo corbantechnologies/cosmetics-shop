@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { Category } from "./categories";
@@ -23,22 +24,28 @@ export interface Shop {
     created_at: string;
     updated_at: string;
     reference: string;
+    return_policy: string;
+    shipping_policy: string;
+    refund_policy: string;
     categories: Category[];
 }
 
 export interface updateShop {
-    name: string;
-    currency: string;
-    description: string;
-    logo: File | any;
-    banner: File | any;
-    address: string;
-    city: string;
-    state: string;
-    zip_code: string;
-    country: string;
-    phone: string;
-    email: string;
+  name: string;
+  currency: string;
+  description: string;
+  logo: File | any;
+  banner: File | any;
+  address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  country: string;
+  phone: string;
+  email: string;
+  return_policy: string;
+  shipping_policy: string;
+  refund_policy: string;
 }
 
 

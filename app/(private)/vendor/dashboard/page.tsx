@@ -567,6 +567,7 @@ export default function VendorDashboard() {
           isOpen={isShopUpdateModalOpen}
           onClose={() => setIsShopUpdateModalOpen(false)}
           title="Update Shop Details"
+          maxWidth="max-w-2xl"
         >
           <UpdateShopForm
             onSuccess={() => {
