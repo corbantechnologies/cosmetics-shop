@@ -23,6 +23,8 @@ export default function ProductPage() {
     const { data: vendor } = useFetchAccount();
     const { data: product, isLoading, isError } = useFetchProductVendor(reference);
 
+    console.log(product);
+
     if (isLoading) {
         return (
             <div className="min-h-screen bg-background p-8 flex items-center justify-center">
