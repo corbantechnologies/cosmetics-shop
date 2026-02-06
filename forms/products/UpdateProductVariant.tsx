@@ -43,6 +43,7 @@ export default function UpdateProductVariant({
   const formik = useFormik({
     initialValues: {
       price: variant.price || "",
+      cost_price: variant.cost_price || "",
       stock: variant.stock || 0,
       // image: null, // Image update to be handled separately or added later if needed
     },
@@ -63,6 +64,7 @@ export default function UpdateProductVariant({
         const formData = new FormData();
         formData.append("product", productCode);
         formData.append("price", String(values.price));
+        formData.append("cost_price", String(values.cost_price));
         formData.append("stock", String(values.stock));
 
         // Append attributes as JSON string or individual keys?
@@ -118,7 +120,7 @@ export default function UpdateProductVariant({
 
   return (
     <form onSubmit={formik.handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium text-foreground mb-1">
             Price
@@ -130,6 +132,20 @@ export default function UpdateProductVariant({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.price}
+            className="w-full px-4 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-1">
+            Cost Price
+          </label>
+          <input
+            name="cost_price"
+            type="number"
+            required
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.cost_price}
             className="w-full px-4 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
           />
         </div>
@@ -148,7 +164,6 @@ export default function UpdateProductVariant({
           />
         </div>
       </div>
-
 
       <div>
         <div className="flex items-center justify-between mb-2">
