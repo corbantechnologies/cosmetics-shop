@@ -14,6 +14,7 @@ import {
     User,
     ShoppingBag,
     LucideShoppingBasket,
+    BarChart3,
 } from "lucide-react";
 
 export default function VendorNavbar() {
@@ -36,6 +37,11 @@ export default function VendorNavbar() {
         name: "Shop Orders",
         href: "/vendor/shop-orders",
         icon: LucideShoppingBasket,
+      },
+      {
+        name: "Analytics",
+        href: "/vendor/analytics",
+        icon: BarChart3,
       },
       {
         name: "Settings",
