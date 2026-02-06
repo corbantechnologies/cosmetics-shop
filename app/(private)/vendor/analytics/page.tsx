@@ -32,7 +32,7 @@ const KPICard = ({
   trend?: string;
   colorClass?: string;
 }) => (
-  <div className="bg-white rounded-sm border border-secondary/30 p-6 shadow-sm flex items-start justify-between transition-transform hover:-translate-y-1 duration-300">
+  <div className="bg-white rounded-sm border border-secondary/30 p-4 md:p-6 shadow-sm flex items-start justify-between transition-transform hover:-translate-y-1 duration-300">
     <div>
       <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-1">
         {title}
@@ -85,7 +85,7 @@ const SalesChart = ({
   }
 
   return (
-    <div className="bg-white rounded-sm border border-secondary/30 p-6 shadow-sm">
+    <div className="bg-white rounded-sm border border-secondary/30 p-4 md:p-6 shadow-sm">
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-serif text-lg text-foreground flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-primary" />
