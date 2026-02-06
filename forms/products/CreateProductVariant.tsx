@@ -28,6 +28,7 @@ export default function CreateProductVariant({
   const formik = useFormik({
     initialValues: {
       price: "",
+      cost_price: "",
       stock: 0,
       // image: null, // Image creation to be handled separately or added later if needed
     },
@@ -48,6 +49,7 @@ export default function CreateProductVariant({
         const formData = new FormData();
         formData.append("product", productCode);
         formData.append("price", String(values.price));
+        formData.append("cost_price", String(values.cost_price));
         formData.append("stock", String(values.stock));
         formData.append("attributes", JSON.stringify(attributesObj));
 
@@ -89,7 +91,7 @@ export default function CreateProductVariant({
 
   return (
     <form onSubmit={formik.handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium text-foreground mb-1">
             Price
@@ -101,6 +103,21 @@ export default function CreateProductVariant({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.price}
+            placeholder="0.00"
+            className="w-full px-4 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-1">
+            Cost Price
+          </label>
+          <input
+            name="cost_price"
+            type="number"
+            required
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.cost_price}
             placeholder="0.00"
             className="w-full px-4 py-2 border border-secondary rounded-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
           />

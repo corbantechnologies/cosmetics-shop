@@ -4,6 +4,7 @@
 import { apiActions, apiMultipartActions } from "@/tools/axios";
 import { AxiosResponse } from "axios";
 import { PaginatedResponse } from "./general";
+import { ProductVariant } from "./productvariants";
 
 export interface Product {
   shop: string;
@@ -36,20 +37,7 @@ export interface Product {
     created_at: string;
     updated_at: string;
   }[];
-  variants: {
-    id: string;
-    product: string;
-    product_name: string;
-    attributes: {};
-    price: string;
-    discounted_price: string | null;
-    stock: number;
-    sku: string;
-    image: string | null;
-    created_at: string;
-    updated_at: string;
-    reference: string;
-  }[];
+  variants: ProductVariant[];
   available_options: string[];
   total_stock: number;
 }
@@ -144,15 +132,14 @@ export const deleteProduct = async (
 // Public Views
 
 export const getProducts = async (): Promise<Product[]> => {
-    const response: AxiosResponse<PaginatedResponse<Product>> = await apiActions.get(
-        `/api/v1/products/`
-    );
+  const response: AxiosResponse<PaginatedResponse<Product>> =
+    await apiActions.get(`/api/v1/products/`);
   return response.data.results || [];
 };
 
 export const getProduct = async (reference: string): Promise<Product> => {
   const response: AxiosResponse<Product> = await apiActions.get(
-        `/api/v1/products/${reference}/`
+    `/api/v1/products/${reference}/`,
   );
   return response.data;
 };

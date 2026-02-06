@@ -269,6 +269,9 @@ export default function ProductPage() {
                         Price ({currency})
                       </th>
                       <th className="px-6 py-3 text-[10px] uppercase tracking-[0.2em] font-medium text-muted-foreground text-right">
+                        Cost ({currency})
+                      </th>
+                      <th className="px-6 py-3 text-[10px] uppercase tracking-[0.2em] font-medium text-muted-foreground text-right">
                         Stock
                       </th>
                       <th className="px-6 py-3 text-[10px] uppercase tracking-[0.2em] font-medium text-muted-foreground text-right">
@@ -308,6 +311,9 @@ export default function ProductPage() {
                           </td>
                           <td className="px-6 py-4 text-sm text-foreground text-right font-medium">
                             {Number(variant.price).toLocaleString()}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-foreground text-right font-medium">
+                            {Number(variant.cost_price).toLocaleString()}
                           </td>
                           <td className="px-6 py-4 text-sm text-foreground text-right">
                             {variant.stock}

@@ -11,6 +11,7 @@ export interface ProductVariant {
   product_name: string;
   attributes: {};
   price: string;
+  cost_price: string;
   discounted_price: string | null;
   stock: number;
   sku: string;
@@ -24,6 +25,7 @@ export interface createProductVariant {
   product: string; // the product_code
   attributes: {};
   price: string;
+  cost_price: string;
   discounted_price: string | null;
   stock: number;
   image: File | null; // can be null. Restricted to one image as there are already images in the product
@@ -33,6 +35,7 @@ export interface updateProductVariant {
   product: string;
   attributes: {};
   price: string;
+  cost_price: string;
   discounted_price: string | null;
   stock: number;
   image: File | null;
