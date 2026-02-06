@@ -5,7 +5,6 @@ import { Category } from "./categories";
 import { apiActions, apiMultipartActions } from "@/tools/axios";
 import { AxiosResponse } from "axios";
 import { PaginatedResponse } from "./general";
-import { PickupStation } from "./pickupstations";
 
 export interface Shop {
   id: string;
@@ -29,7 +28,6 @@ export interface Shop {
   shipping_policy: string;
   refund_policy: string;
   categories: Category[];
-  pickup_stations: PickupStation[];
 }
 
 export interface updateShop {

@@ -7,7 +7,7 @@ import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Loader2, X, ChevronDown } from "lucide-react";
-import { useFetchSubCategories } from "@/hooks/subcategories/actions";
+import { useFetchSubCategoriesVendor } from "@/hooks/subcategories/actions";
 
 interface CreateProductProps {
   onSuccess?: () => void;
@@ -16,7 +16,7 @@ interface CreateProductProps {
 export function CreateProduct({ onSuccess }: CreateProductProps) {
   const router = useRouter();
   const authHeaders = useAxiosAuth();
-  const { data: subcategories } = useFetchSubCategories();
+  const { data: subcategories } = useFetchSubCategoriesVendor();
   const [loading, setLoading] = useState(false);
   const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
   const [subSearch, setSubSearch] = useState("");
