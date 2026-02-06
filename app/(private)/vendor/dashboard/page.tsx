@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useFetchAccount } from "@/hooks/accounts/actions";
-import { useFetchCategories } from "@/hooks/categories/actions";
-import { useFetchSubCategories } from "@/hooks/subcategories/actions";
-import { useFetchPickupStations } from "@/hooks/pickupstations/actions";
+import { useFetchCategoriesVendor } from "@/hooks/categories/actions";
+import { useFetchSubCategoriesVendor } from "@/hooks/subcategories/actions";
+import { useFetchPickupStationsVendor } from "@/hooks/pickupstations/actions";
 import { useFetchShop } from "@/hooks/shops/actions";
 import {
   LayoutGrid,
@@ -61,17 +61,17 @@ export default function VendorDashboard() {
     data: categories,
     isLoading: isLoadingCategories,
     refetch: refetchCategories,
-  } = useFetchCategories();
+  } = useFetchCategoriesVendor();
   const {
     data: subcategories,
     isLoading: isLoadingSubcategories,
     refetch: refetchSubcategories,
-  } = useFetchSubCategories();
+  } = useFetchSubCategoriesVendor();
   const {
     data: pickupStations,
     isLoading: isLoadingPickupStations,
     refetch: refetchPickupStations,
-  } = useFetchPickupStations();
+  } = useFetchPickupStationsVendor();
   const {
     data: products,
     isLoading: isLoadingProducts,
@@ -441,13 +441,15 @@ export default function VendorDashboard() {
                   title="Pickup Stations"
                   description="Customer delivery points and their operational status."
                 />
-                <button
-                  onClick={() => setIsPickupStationModalOpen(true)}
-                  className="inline-flex items-center justify-center rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Station
-                </button>
+                {vendor?.is_superuser && (
+                  <button
+                    onClick={() => setIsPickupStationModalOpen(true)}
+                    className="inline-flex items-center justify-center rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Station
+                  </button>
+                )}
               </div>
               <div className="bg-white border border-secondary/30 rounded-sm overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
@@ -514,18 +516,20 @@ export default function VendorDashboard() {
                               </span>
                             </td>
                             <td className="px-6 py-4">
-                              <button
-                                onClick={() => {
-                                  setSelectedPickupStationCode(
-                                    station.station_code,
-                                  );
-                                  setIsUpdatePickupStationModalOpen(true);
-                                }}
-                                className="text-foreground/50 hover:text-primary transition-colors"
-                                title="Edit Station"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
+                              {vendor?.is_superuser && (
+                                <button
+                                  onClick={() => {
+                                    setSelectedPickupStationCode(
+                                      station.station_code,
+                                    );
+                                    setIsUpdatePickupStationModalOpen(true);
+                                  }}
+                                  className="text-foreground/50 hover:text-primary transition-colors"
+                                  title="Edit Station"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                              )}
                             </td>
                           </tr>
                         ))

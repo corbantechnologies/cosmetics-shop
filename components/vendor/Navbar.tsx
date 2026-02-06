@@ -13,6 +13,7 @@ import {
     X,
     User,
     ShoppingBag,
+    LucideShoppingBasket,
 } from "lucide-react";
 
 export default function VendorNavbar() {
@@ -21,21 +22,26 @@ export default function VendorNavbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const navLinks = [
-        {
-            name: "Dashboard",
-            href: "/vendor/dashboard",
-            icon: LayoutDashboard,
-        },
-        {
-            name: "Products", // Placeholder for when products page is ready
-            href: "/vendor/products",
-            icon: ShoppingBag,
-        },
-        {
-            name: "Settings",
-            href: "/vendor/settings",
-            icon: Settings,
-        },
+      {
+        name: "Dashboard",
+        href: "/vendor/dashboard",
+        icon: LayoutDashboard,
+      },
+      {
+        name: "Products", // Placeholder for when products page is ready
+        href: "/vendor/products",
+        icon: ShoppingBag,
+      },
+      {
+        name: "Shop Orders",
+        href: "/vendor/shop-orders",
+        icon: LucideShoppingBasket,
+      },
+      {
+        name: "Settings",
+        href: "/vendor/settings",
+        icon: Settings,
+      },
     ];
 
     const handleLogout = () => {

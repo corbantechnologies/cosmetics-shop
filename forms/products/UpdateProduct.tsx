@@ -6,7 +6,9 @@ import { updateProduct } from "@/services/products";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import toast from "react-hot-toast";
 import { Loader2, X, ChevronDown } from "lucide-react";
-import { useFetchSubCategories } from "@/hooks/subcategories/actions";
+import {
+  useFetchSubCategoriesVendor,
+} from "@/hooks/subcategories/actions";
 import { useFetchProductVendor } from "@/hooks/products/actions";
 
 interface UpdateProductProps {
@@ -19,7 +21,7 @@ export default function UpdateProduct({
   onSuccess,
 }: UpdateProductProps) {
   const authHeaders = useAxiosAuth();
-  const { data: subcategories } = useFetchSubCategories();
+  const { data: subcategories } = useFetchSubCategoriesVendor();
   const { data: product } = useFetchProductVendor(productReference);
 
   const [loading, setLoading] = useState(false);
