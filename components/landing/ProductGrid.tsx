@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Star, Loader2 } from "lucide-react";
 import { useFetchProducts } from "@/hooks/products/actions";
 import { formatCurrency } from "@/components/dashboard/utils";
+import ProductCard from "../products/ProductCard";
 
 export default function ProductGrid() {
   const { data: products, isLoading } = useFetchProducts();
@@ -34,50 +35,7 @@ export default function ProductGrid() {
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-12">
             {displayProducts.map((product) => {
-              // Calculate price range or single price
-              const prices = product.variants.map((v) => parseFloat(v.price));
-              const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
-              const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
-
-              const isRange = minPrice !== maxPrice;
-
-              return (
-                <div key={product.reference} className="group cursor-pointer">
-                  {/* Image Container */}
-                  {/* Image Container */}
-                  <div className="relative aspect-square overflow-hidden bg-secondary/10 mb-3">
-                    <Image
-                      src={product.images[0].image}
-                      alt={product.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {/* Add to Cart - Visible on hover for desktop, could stay hidden on mobile or shown as icon */}
-                    <button className="absolute bottom-0 left-0 w-full py-3 md:py-4 bg-foreground/90 text-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 font-medium text-sm md:text-base">
-                      View Details
-                    </button>
-                  </div>
-
-                  {/* Content */}
-                  <div>
-                    <div className="flex justify-between items-start mb-1">
-                      <h3 className="text-base font-serif text-foreground font-bold group-hover:text-primary transition-colors line-clamp-1 pr-2">
-                        {product.name}
-                      </h3>
-                      <p className="text-base font-medium text-primary whitespace-nowrap">
-                        {prices.length > 0
-                          ? isRange
-                            ? `${formatCurrency(minPrice, product.shop_details.currency)} - ${formatCurrency(maxPrice, product.shop_details.currency)}`
-                            : formatCurrency(minPrice, product.shop_details.currency)
-                          : "Out of Stock"}
-                      </p>
-                    </div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                      {product.sub_category[0]?.name || "General"}
-                    </p>
-                  </div>
-                </div>
-              );
+              return <ProductCard key={product.reference} product={product} />;
             })}
           </div>
         )}
