@@ -62,28 +62,31 @@ export default function AllProductsPage() {
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
 
                     {/* Categories - Horizontal Scrollable */}
-                    <div className="flex flex-wrap justify-center gap-2 w-full md:w-auto">
-                        <button
-                            onClick={() => setSelectedCategory(null)}
-                            className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${selectedCategory === null
-                                ? "bg-foreground text-background"
-                                : "bg-secondary/20 text-foreground hover:bg-secondary/30"
-                                }`}
-                        >
-                            All
-                        </button>
-                        {categoriesWithProducts.map((category) => (
+                    {/* Categories - Horizontal Scrollable */}
+                    <div className="w-full md:w-auto overflow-x-auto pb-4 md:pb-0 hide-scrollbar">
+                        <div className="flex flex-nowrap md:flex-wrap gap-2 min-w-max px-1">
                             <button
-                                key={category.reference}
-                                onClick={() => setSelectedCategory(category.reference)}
-                                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${selectedCategory === category.reference
-                                    ? "bg-foreground text-background"
-                                    : "bg-secondary/20 text-foreground hover:bg-secondary/30"
+                                onClick={() => setSelectedCategory(null)}
+                                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border whitespace-nowrap ${selectedCategory === null
+                                    ? "bg-foreground text-background border-foreground"
+                                    : "bg-background text-foreground border-border hover:border-foreground"
                                     }`}
                             >
-                                {category.name}
+                                All
                             </button>
-                        ))}
+                            {categoriesWithProducts.map((category) => (
+                                <button
+                                    key={category.reference}
+                                    onClick={() => setSelectedCategory(category.reference)}
+                                    className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border whitespace-nowrap ${selectedCategory === category.reference
+                                        ? "bg-foreground text-background border-foreground"
+                                        : "bg-background text-foreground border-border hover:border-foreground"
+                                        }`}
+                                >
+                                    {category.name}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Sort Dropdown (Placeholder) */}
