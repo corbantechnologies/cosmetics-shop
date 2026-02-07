@@ -44,12 +44,13 @@ export default function ProductGrid() {
               return (
                 <div key={product.reference} className="group cursor-pointer">
                   {/* Image Container */}
-                  <div className="relative aspect-square overflow-hidden bg-secondary/10 mb-4">
+                  {/* Image Container */}
+                  <div className="relative aspect-square overflow-hidden bg-secondary/10 mb-3">
                     <Image
                       src={product.images[0].image}
                       alt={product.name}
                       fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     {/* Add to Cart - Visible on hover for desktop, could stay hidden on mobile or shown as icon */}
                     <button className="absolute bottom-0 left-0 w-full py-3 md:py-4 bg-foreground/90 text-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 font-medium text-sm md:text-base">
@@ -58,19 +59,21 @@ export default function ProductGrid() {
                   </div>
 
                   {/* Content */}
-                  <div className="text-center">
-                    <p className="text-[10px] md:text-xs text-primary uppercase tracking-wider mb-1">
+                  <div>
+                    <div className="flex justify-between items-start mb-1">
+                      <h3 className="text-base font-serif text-foreground font-bold group-hover:text-primary transition-colors line-clamp-1 pr-2">
+                        {product.name}
+                      </h3>
+                      <p className="text-base font-medium text-primary whitespace-nowrap">
+                        {prices.length > 0
+                          ? isRange
+                            ? `${formatCurrency(minPrice, product.shop_details.currency)} - ${formatCurrency(maxPrice, product.shop_details.currency)}`
+                            : formatCurrency(minPrice, product.shop_details.currency)
+                          : "Out of Stock"}
+                      </p>
+                    </div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
                       {product.sub_category[0]?.name || "General"}
-                    </p>
-                    <h3 className="text-sm md:text-lg font-serif text-foreground font-medium mb-1 md:mb-2 group-hover:text-primary transition-colors line-clamp-1">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm md:text-md font-semibold text-foreground">
-                      {prices.length > 0
-                        ? isRange
-                          ? `${formatCurrency(minPrice, product.shop_details.currency)} - ${formatCurrency(maxPrice, product.shop_details.currency)}`
-                          : formatCurrency(minPrice, product.shop_details.currency)
-                        : "Out of Stock"}
                     </p>
                   </div>
                 </div>
