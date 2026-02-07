@@ -44,7 +44,7 @@ export default function ProductGrid() {
               return (
                 <div key={product.reference} className="group cursor-pointer">
                   {/* Image Container */}
-                  <div className="relative aspect-[3/4] overflow-hidden bg-secondary/10 mb-4">
+                  <div className="relative aspect-square overflow-hidden bg-secondary/10 mb-4">
                     <Image
                       src={product.images[0].image}
                       alt={product.name}
@@ -65,24 +65,11 @@ export default function ProductGrid() {
                     <h3 className="text-sm md:text-lg font-serif text-foreground font-medium mb-1 md:mb-2 group-hover:text-primary transition-colors line-clamp-1">
                       {product.name}
                     </h3>
-                    <div className="flex items-center justify-center gap-1 mb-1 md:mb-2">
-                      {/* Placeholder rating for now */}
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-2.5 h-2.5 md:w-3 md:h-3 ${
-                            i < 4
-                              ? "fill-primary text-primary"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
                     <p className="text-sm md:text-md font-semibold text-foreground">
                       {prices.length > 0
                         ? isRange
-                          ? `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}`
-                          : formatCurrency(minPrice)
+                          ? `${formatCurrency(minPrice, product.shop_details.currency)} - ${formatCurrency(maxPrice, product.shop_details.currency)}`
+                          : formatCurrency(minPrice, product.shop_details.currency)
                         : "Out of Stock"}
                     </p>
                   </div>
