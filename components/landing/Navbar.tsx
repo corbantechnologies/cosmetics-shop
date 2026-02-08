@@ -15,12 +15,12 @@ import UserMenu from "./UserMenu";
 import { useSession, signOut } from "next-auth/react";
 import { useFetchCategories } from "@/hooks/categories/actions";
 import CartDrawer from "../cart/CartDrawer";
-import { useFetchCart } from "@/hooks/cart/actions";
+import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
   const { data: session } = useSession();
   const { data: categories } = useFetchCategories();
-  const { data: cart } = useFetchCart();
+  const { cart } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isMobileShopOpen, setIsMobileShopOpen] = useState(false);
@@ -70,6 +70,15 @@ export default function Navbar() {
               {isShopOpen && (
                 <div className="absolute top-full left-0 w-64 pt-2 animate-in fade-in duration-200">
                   <div className="bg-white rounded-sm shadow-xl border border-secondary/10 overflow-hidden">
+                    {/* Add a "Shop All" link at the top */}
+                    <div className="group/cat relative">
+                      <Link
+                        href="/shop"
+                        className="block px-4 py-2 text-sm text-foreground hover:bg-secondary/5 hover:text-primary transition-colors font-medium flex justify-between items-center"
+                      >
+                        Shop All
+                      </Link>
+                    </div>
                     {activeCategories.length > 0 ? (
                       <div className="py-2">
                         {activeCategories.map((category) => (
@@ -113,24 +122,10 @@ export default function Navbar() {
                 </div>
               )}
             </div>
-
-            {["Our Story", "Contact"].map((item) => (
-              <Link
-                key={item}
-                href={`/${item.toLowerCase().replace(" ", "-")}`}
-                className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm px-1"
-              >
-                {item}
-              </Link>
-            ))}
           </div>
 
           {/* Icons & Mobile Toggle */}
           <div className="flex items-center space-x-4 md:space-x-6">
-            <button className="text-foreground/80 hover:text-primary transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm">
-              <Search className="w-5 h-5" />
-            </button>
-
             {/* User Dropdown or Login Link (Desktop) */}
             <UserMenu />
 

@@ -63,7 +63,7 @@ export default function OrdersPage() {
           {orders.map((order) => (
             <Link
               key={order.id}
-              href={`/checkout/orders/${order.reference}`}
+              href={`/orders/${order.reference}`}
               className="block bg-white border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
             >
               <div className="p-6">

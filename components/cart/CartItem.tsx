@@ -1,13 +1,11 @@
 "use client";
 
-import {
-  useUpdateCartItem,
-  useDeleteCartItem,
-} from "@/hooks/cartitems/mutations";
+import { useCart } from "@/context/CartContext";
 import { CartItem as CartItemType } from "@/services/cartitems";
 import { formatCurrency } from "@/components/dashboard/utils";
 import { Loader2, Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 interface CartItemProps {
   item: CartItemType;
@@ -15,17 +13,28 @@ interface CartItemProps {
 }
 
 export default function CartItem({ item, currency = "KES" }: CartItemProps) {
-  const { mutate: updateCartItem, isPending: isUpdating } = useUpdateCartItem();
-  const { mutate: deleteCartItem, isPending: isDeleting } = useDeleteCartItem();
+  const { updateItem, removeItem } = useCart();
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  // Optimistic UI for quantity could be added here, but relying on server for now
-  const handleQuantityChange = (newQuantity: number) => {
+  // Optimistic UI for quantity could be added here, but relying on server/context for now
+  const handleQuantityChange = async (newQuantity: number) => {
     if (newQuantity < 1) return;
-    updateCartItem({ reference: item.reference, quantity: newQuantity });
+    setIsUpdating(true);
+    try {
+      await updateItem(item.reference, newQuantity);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
-  const handleDelete = () => {
-    deleteCartItem(item.reference);
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await removeItem(item.reference);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const isDisabled = isUpdating || isDeleting;
