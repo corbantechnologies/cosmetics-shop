@@ -5,14 +5,7 @@ import { useAddToCart } from "@/hooks/cartitems/mutations";
 import ProductCard from "@/components/products/ProductCard";
 import AddToCartButton from "@/components/products/AddToCartButton";
 import { formatCurrency } from "@/components/dashboard/utils";
-import {
-  Loader2,
-  Heart,
-  Share2,
-  Minus,
-  Plus,
-  ChevronRight,
-} from "lucide-react";
+import { Loader2, Minus, Plus, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useState, use } from "react";
 import Link from "next/link";
