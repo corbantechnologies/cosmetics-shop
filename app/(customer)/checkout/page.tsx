@@ -40,47 +40,47 @@ export default function CheckoutPage() {
     (s) => s.station_code === selectedStationCode,
   );
 
-const handleCheckout = async () => {
-  if (!selectedStationCode) {
-    toast.error("Please select a pickup station");
-    return;
-  }
-  if (!phoneNumber) {
-    toast.error("Please enter a phone number");
-    return;
-  }
+  const handleCheckout = async () => {
+    if (!selectedStationCode) {
+      toast.error("Please select a pickup station");
+      return;
+    }
+    if (!phoneNumber) {
+      toast.error("Please enter a phone number");
+      return;
+    }
 
-  try {
-    setIsCheckingOut(true);
+    try {
+      setIsCheckingOut(true);
 
-    const order = await checkoutCart(
-      {
-        pickup_station: selectedStationCode,
-        phone_number: phoneNumber,
-      },
-      header,
-    );
+      const order = await checkoutCart(
+        {
+          pickup_station: selectedStationCode,
+          phone_number: phoneNumber,
+        },
+        header,
+      );
 
-    // ── Only reaches here if request was successful ──
-    toast.success("Order placed successfully!");
+      // ── Only reaches here if request was successful ──
+      toast.success("Order placed successfully!");
 
-    router.push(`/checkout/orders/${order.order_reference}`);
-  } catch (error: any) {
-    console.error("Checkout failed:", error);
+      router.push(`/checkout/orders/${order.order_reference}`);
+    } catch (error: any) {
+      console.error("Checkout failed:", error);
 
-    // Try to show meaningful message
-    const message =
-      error?.response?.data?.detail ||
-      error?.response?.data?.message ||
-      error?.response?.data?.non_field_errors?.[0] ||
-      error.message ||
-      "Failed to place order. Please try again.";
+      // Try to show meaningful message
+      const message =
+        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
+        error?.response?.data?.non_field_errors?.[0] ||
+        error.message ||
+        "Failed to place order. Please try again.";
 
-    toast.error(message);
-  } finally {
-    setIsCheckingOut(false);
-  }
-};
+      toast.error(message);
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
   if (isCartLoading || isStationsLoading) {
     return (
@@ -135,7 +135,9 @@ const handleCheckout = async () => {
                     Full Name
                   </label>
                   <div className="p-3 bg-secondary/10 rounded-sm text-foreground">
-                    {session?.user?.first_name + " " + session?.user?.last_name || "Guest Checkout"}
+                    {session?.user?.first_name +
+                      " " +
+                      session?.user?.last_name || "Guest Checkout"}
                   </div>
                 </div>
                 <div>

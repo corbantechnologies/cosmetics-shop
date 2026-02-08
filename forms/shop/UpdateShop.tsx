@@ -47,25 +47,25 @@ export default function UpdateShopForm({ onSuccess }: UpdateShopFormProps) {
       setLoading(true);
       try {
         const formData = new FormData();
-        formData.append("name", values.name);
-        formData.append("description", values.description);
+        formData.append("name", values.name || "");
+        formData.append("description", values.description || "");
         if ((values.logo as any) instanceof File) {
-          formData.append("logo", values.logo);
+          formData.append("logo", values.logo as any);
         }
         if ((values.banner as any) instanceof File) {
-          formData.append("banner", values.banner);
+          formData.append("banner", values.banner as any);
         }
-        formData.append("address", values.address);
-        formData.append("city", values.city);
-        formData.append("state", values.state);
-        formData.append("zip_code", values.zip_code);
-        formData.append("country", values.country);
-        formData.append("phone", values.phone);
-        formData.append("email", values.email);
-        formData.append("currency", values.currency);
-        formData.append("return_policy", values.return_policy);
-        formData.append("shipping_policy", values.shipping_policy);
-        formData.append("refund_policy", values.refund_policy);
+        formData.append("address", values.address || "");
+        formData.append("city", values.city || "");
+        formData.append("state", values.state || "");
+        formData.append("zip_code", values.zip_code || "");
+        formData.append("country", values.country || "");
+        formData.append("phone", values.phone || "");
+        formData.append("email", values.email || "");
+        formData.append("currency", values.currency || "");
+        formData.append("return_policy", values.return_policy || "");
+        formData.append("shipping_policy", values.shipping_policy || "");
+        formData.append("refund_policy", values.refund_policy || "");
 
         await updateShop(shop.shop_code, formData, authHeaders);
         toast.success("Shop details updated successfully");

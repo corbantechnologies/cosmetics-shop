@@ -10,6 +10,8 @@ export interface CartItem {
   variant_name: string;
   variant_attributes: Record<string, string>;
   variant_shop: string;
+  variant_sku: string;
+  variant_price: number;
   variant_shop_code: string;
   variant_shop_currency: string;
   variant_image: string;

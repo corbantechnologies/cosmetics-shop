@@ -13,13 +13,12 @@ import {
   RefreshCw,
   Lock,
   ChevronLeft,
-  ShoppingBag,
   Smartphone,
   Check,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { Button } from "@headlessui/react";
 
@@ -271,15 +270,14 @@ export default function OrderPaymentPage({
                             placeholder="7XX XXX XXX"
                           />
                         </div>
-                        <ErrorMessage
-                          name="phone_number"
-                          component="p"
-                          className="mt-1.5 text-xs text-red-500 flex items-center gap-1"
-                        >
-                          <AlertCircle className="w-3 h-3" />
-                          {errors.phone_number &&
-                            "Enter valid M-Pesa number (e.g., 712345678)"}
-                        </ErrorMessage>
+                        <div className="h-5">
+                          {errors.phone_number && touched.phone_number && (
+                            <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3" />
+                              {errors.phone_number}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       {/* Status Message */}

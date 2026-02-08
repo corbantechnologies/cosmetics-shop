@@ -31,13 +31,19 @@ export const getCart = async (headers: {
   return response.data;
 };
 
-import { Order } from "./orders";
+export interface CheckoutResponse {
+  message: string;
+  order_id: string;
+  order_reference: string;
+  total_amount: number;
+  status: string;
+}
 
 export const checkoutCart = async (
   data: checkoutCart,
   headers: { headers: { Authorization: string } },
-): Promise<Order> => {
-  const response: AxiosResponse<Order> = await apiActions.post(
+): Promise<CheckoutResponse> => {
+  const response: AxiosResponse<CheckoutResponse> = await apiActions.post(
     `/api/v1/orders/checkout/`,
     data,
     headers,
