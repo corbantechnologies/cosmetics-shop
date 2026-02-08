@@ -25,10 +25,6 @@ import { toast } from "react-hot-toast";
 import { checkoutCart } from "@/services/cart";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 
-interface CheckoutResponse {
-  order_reference: string;
-}
-
 export default function CheckoutPage() {
   const router = useRouter();
   const { data: session } = useSession();

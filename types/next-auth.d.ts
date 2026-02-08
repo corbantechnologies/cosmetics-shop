@@ -11,6 +11,9 @@ declare module "next-auth" {
       last_name: string;
       email: string;
       token: string;
+      is_vendor?: boolean;
+      is_customer?: boolean;
+      is_superuser?: boolean;
     } & DefaultSession["user"];
   }
 
@@ -20,6 +23,9 @@ declare module "next-auth" {
     last_name: string;
     email: string;
     token: string;
+    is_vendor?: boolean;
+    is_customer?: boolean;
+    is_superuser?: boolean;
   }
 }
 
