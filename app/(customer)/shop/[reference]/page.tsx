@@ -282,7 +282,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ refer
 
                 {/* We Think You'll Love This */}
                 {relatedProducts.length > 0 && (
-                    <div className="mt-20 border-t border-border pt-12">
+                    <div className="mt-12 md:mt-20 border-t border-border pt-12">
                         <h2 className="text-2xl md:text-3xl font-serif font-medium text-foreground mb-8">
                             We Think You'll Love This
                         </h2>
