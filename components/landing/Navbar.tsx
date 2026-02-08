@@ -14,13 +14,20 @@ import {
 import UserMenu from "./UserMenu";
 import { useSession, signOut } from "next-auth/react";
 import { useFetchCategories } from "@/hooks/categories/actions";
+import CartDrawer from "../cart/CartDrawer";
+import { useFetchCart } from "@/hooks/cart/actions";
 
 export default function Navbar() {
   const { data: session } = useSession();
   const { data: categories } = useFetchCategories();
+  const { data: cart } = useFetchCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isMobileShopOpen, setIsMobileShopOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const cartItemsCount =
+    cart?.items.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
   const activeCategories = categories?.filter((c) => c.is_active) || [];
 
@@ -127,11 +134,16 @@ export default function Navbar() {
             {/* User Dropdown or Login Link (Desktop) */}
             <UserMenu />
 
-            <button className="text-foreground/80 hover:text-primary transition-colors relative outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm">
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="text-foreground/80 hover:text-primary transition-colors relative outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+            >
               <ShoppingBag className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] flex items-center justify-center rounded-full">
-                0
-              </span>
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] flex items-center justify-center rounded-full">
+                  {cartItemsCount}
+                </span>
+              )}
             </button>
 
             {/* Mobile Menu Toggle */}
@@ -144,6 +156,8 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
       {/* Mobile Menu Overlay & Drawer */}
       {isMobileMenuOpen && (
@@ -190,8 +204,9 @@ export default function Navbar() {
                   >
                     Shop
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-200 ${isMobileShopOpen ? "rotate-180" : ""
-                        }`}
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        isMobileShopOpen ? "rotate-180" : ""
+                      }`}
                     />
                   </button>
                   {isMobileShopOpen && (
