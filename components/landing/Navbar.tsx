@@ -242,7 +242,7 @@ export default function Navbar() {
                 {session ? (
                   <>
                     <Link
-                      href="/profile"
+                      href="/account"
                       className="text-foreground hover:text-primary transition-colors py-2 flex items-center gap-2"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
