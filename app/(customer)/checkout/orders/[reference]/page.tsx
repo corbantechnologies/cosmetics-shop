@@ -116,17 +116,16 @@ export default function OrderPaymentPage({
   });
 
   return (
-    <div className="min-h-screen bg-[#FFF1F2] max-w-7xl mx-auto">
-      <div className="container mx-auto space-y-6">
+    <div className="min-h-screen bg-[#FFF1F2] py-8 md:py-12 px-4">
+      <div className="max-w-4xl mx-auto space-y-8">
         {/* Back Link */}
         <Link
           href="/shop"
-          className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 mb-2 transition-colors"
+          className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
         >
           <ChevronLeft className="w-4 h-4 mr-1" /> Back to Shop
         </Link>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           {/* CARD 1: YOUR ORDER */}
           <div className="bg-white rounded-[24px] shadow overflow-hidden">
             <div className="p-6">
