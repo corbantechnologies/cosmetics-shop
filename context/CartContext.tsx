@@ -60,32 +60,46 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // Load guest cart from localStorage on mount (when not authenticated)
   useEffect(() => {
+    if (status === "loading") return;
+
     if (!isAuthenticated) {
-      const stored = localStorage.getItem("guest_cart");
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          setGuestCart(parsed);
-        } catch (e) {
-          console.error("Failed to parse guest cart from localStorage", e);
-          localStorage.removeItem("guest_cart");
+      const loadGuestCart = () => {
+        const stored = localStorage.getItem("guest_cart");
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            setTimeout(() => {
+              setGuestCart(parsed);
+              setIsGuestLoading(false);
+            }, 0);
+          } catch (e) {
+            console.error("Failed to parse guest cart from localStorage", e);
+            localStorage.removeItem("guest_cart");
+            setIsGuestLoading(false);
+          }
+        } else {
+          // Initialize empty guest cart
+          const newGuestCart = {
+            customer: "guest",
+            customer_name: "Guest",
+            customer_email: "",
+            reference: `guest-${Date.now()}`,
+            items: [],
+            grand_total: 0,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          } as unknown as Cart;
+
+          setTimeout(() => {
+            setGuestCart(newGuestCart);
+            setIsGuestLoading(false);
+          }, 0);
         }
-      } else {
-        // Initialize empty guest cart
-        setGuestCart({
-          customer: "guest",
-          customer_name: "Guest",
-          customer_email: "",
-          reference: `guest-${Date.now()}`,
-          items: [],
-          grand_total: 0,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        } as unknown as Cart);
-      }
-      setIsGuestLoading(false);
+      };
+
+      loadGuestCart();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, status]);
 
   // Persist guest cart to localStorage whenever it changes
   useEffect(() => {
@@ -160,7 +174,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           variant_name: input.variant_name || "Unknown Product",
           variant_image: input.variant_image || "/placeholder.png",
           quantity: input.quantity,
-          price: input.variant_price?.toString() || "0",
+          variant_price: input.variant_price || 0,
           sub_total: (input.variant_price || 0) * input.quantity,
           variant_shop_currency: input.shop_currency || "KES",
           cart: prev.reference,
@@ -175,7 +189,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         if (existingItemIndex >= 0) {
           const existing = newItems[existingItemIndex];
           const newQty = existing.quantity + input.quantity;
-          const price = parseFloat(existing.price?.toString() || "0");
+          const price = parseFloat(existing.variant_price?.toString() || "0");
 
           newItems[existingItemIndex] = {
             ...existing,
@@ -214,7 +228,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
         const newItems = prev.items.map((item) => {
           if (item.reference === reference) {
-            const price = parseFloat(item.price?.toString() || "0");
+            // Ensure we use variant_price, and handle if it's potentially missing or undefined
+            const price = parseFloat(item.variant_price?.toString() || "0");
             return {
               ...item,
               quantity,
