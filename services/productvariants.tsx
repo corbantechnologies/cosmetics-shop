@@ -93,3 +93,20 @@ export const deleteProductVariant = async (
   );
   return response.data;
 };
+
+
+// Public
+export const getProductVariantsPublic = async (): Promise<ProductVariant[]> => {
+  const response: AxiosResponse<PaginatedResponse<ProductVariant>> =
+    await apiActions.get(`/api/v1/productvariants/`);
+  return response.data.results || [];
+};
+
+export const getProductVariantPublic = async (
+  reference: string,
+): Promise<ProductVariant> => {
+  const response: AxiosResponse<ProductVariant> = await apiActions.get(
+    `/api/v1/productvariants/${reference}/`,
+  );
+  return response.data;
+};

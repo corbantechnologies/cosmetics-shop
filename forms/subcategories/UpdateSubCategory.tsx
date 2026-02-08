@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import { updateSubCategory } from "@/services/subcategories";
 import { useFetchCategoriesVendor } from "@/hooks/categories/actions";
-import { useFetchSubCategory } from "@/hooks/subcategories/actions";
+import { useFetchSubCategoryVendor } from "@/hooks/subcategories/actions";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import toast from "react-hot-toast";
 
@@ -22,7 +22,7 @@ export default function UpdateSubCategory({
     data: subCategory,
     isLoading: subCategoryLoading,
     isError,
-  } = useFetchSubCategory(reference);
+  } = useFetchSubCategoryVendor(reference);
   const { data: categories, isLoading: categoriesLoading } =
     useFetchCategoriesVendor();
 

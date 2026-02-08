@@ -3,14 +3,14 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import { updateCategory } from '@/services/categories';
-import { useFetchCategory } from '@/hooks/categories/actions';
+import { useFetchCategoryVendor } from '@/hooks/categories/actions';
 import useAxiosAuth from '@/hooks/authentication/useAxiosAuth';
 import toast from 'react-hot-toast';
 
 export default function UpdateCategory({ reference, onSuccess }: { reference: string, onSuccess?: () => void }) {
     const authHeaders = useAxiosAuth();
     const [loading, setLoading] = useState(false);
-    const { data: category, isLoading, isError } = useFetchCategory(reference);
+    const { data: category, isLoading, isError } = useFetchCategoryVendor(reference);
 
     const formik = useFormik({
         initialValues: {

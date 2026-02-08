@@ -42,17 +42,13 @@ export const getSubCategoriesVendor = async (headers: {
   return response.data.results || [];
 };
 
-export const getSubCategories = async (): Promise<SubCategory[]> => {
-  const response: AxiosResponse<PaginatedResponse<SubCategory>> =
-    await apiActions.get(`/api/v1/subcategories/`);
-  return response.data.results || [];
-};
-
-export const getSubCategory = async (
+export const getSubCategoryVendor = async (
   reference: string,
+  headers: { headers: { Authorization: string } },
 ): Promise<SubCategory> => {
   const response: AxiosResponse<SubCategory> = await apiActions.get(
     `/api/v1/subcategories/${reference}/`,
+    headers,
   );
   return response.data;
 };
@@ -89,6 +85,23 @@ export const deleteSubCategory = async (
   const response: AxiosResponse<SubCategory> = await apiActions.delete(
     `/api/v1/subcategories/${reference}/`,
     headers,
+  );
+  return response.data;
+};
+
+
+// Public
+export const getSubCategories = async (): Promise<SubCategory[]> => {
+  const response: AxiosResponse<PaginatedResponse<SubCategory>> =
+    await apiActions.get(`/api/v1/subcategories/`);
+  return response.data.results || [];
+};
+
+export const getSubCategory = async (
+  reference: string,
+): Promise<SubCategory> => {
+  const response: AxiosResponse<SubCategory> = await apiActions.get(
+    `/api/v1/subcategories/${reference}/`,
   );
   return response.data;
 };

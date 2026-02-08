@@ -5,6 +5,7 @@ import {
   getCategories,
   getCategory,
   getCategoriesVendor,
+  getCategoryVendor,
 } from "@/services/categories";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 
@@ -25,10 +26,19 @@ export function useFetchCategory(reference: string) {
 }
 
 export function useFetchCategoriesVendor() {
-    const headers = useAxiosAuth()
+  const headers = useAxiosAuth()
   return useQuery({
     queryKey: ["categories-vendor"],
     queryFn: () => getCategoriesVendor(headers),
     enabled: true,
+  });
+}
+
+export function useFetchCategoryVendor(reference: string) {
+  const headers = useAxiosAuth()
+  return useQuery({
+    queryKey: ["category-vendor", reference],
+    queryFn: () => getCategoryVendor(reference, headers),
+    enabled: !!reference,
   });
 }

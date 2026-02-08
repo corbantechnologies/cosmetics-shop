@@ -37,13 +37,6 @@ export const getCategories = async (): Promise<Category[]> => {
   return response.data.results || [];
 };
 
-export const getCategoriesVendor = async (headers: {
-  headers: { Authorization: string };
-}): Promise<Category[]> => {
-  const response: AxiosResponse<PaginatedResponse<Category>> =
-    await apiActions.get(`/api/v1/categories/`, headers);
-  return response.data.results || [];
-};
 
 export const getCategory = async (reference: string): Promise<Category> => {
   const response: AxiosResponse<Category> = await apiActions.get(
@@ -53,6 +46,25 @@ export const getCategory = async (reference: string): Promise<Category> => {
 };
 
 // Authenticated
+export const getCategoriesVendor = async (headers: {
+  headers: { Authorization: string };
+}): Promise<Category[]> => {
+  const response: AxiosResponse<PaginatedResponse<Category>> =
+    await apiActions.get(`/api/v1/categories/`, headers);
+  return response.data.results || [];
+};
+
+export const getCategoryVendor = async (reference: string, headers: {
+  headers: { Authorization: string };
+}): Promise<Category> => {
+  const response: AxiosResponse<Category> = await apiActions.get(
+    `/api/v1/categories/${reference}/`,
+    headers,
+  );
+  return response.data;
+};
+
+
 export const createCategory = async (
   data: createCategory,
   headers: { headers: { Authorization: string } },

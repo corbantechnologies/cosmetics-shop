@@ -4,9 +4,11 @@ import Link from "next/link";
 import { User, LogOut, Settings, Heart } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useSession, signOut } from "next-auth/react";
+import { useFetchAccount } from "@/hooks/accounts/actions";
 
 export default function UserMenu() {
     const { data: session } = useSession();
+    const { data: user } = useFetchAccount();
 
     if (!session) {
         return (
@@ -16,11 +18,14 @@ export default function UserMenu() {
         );
     }
 
+    const displayName = user?.first_name || user?.usercode || "Account";
+
     return (
         <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-                <button className="text-foreground/80 hover:text-primary transition-colors hidden md:block outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm">
+                <button className="flex items-center gap-2 text-foreground/80 hover:text-primary transition-colors hidden md:flex outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm">
                     <User className="w-5 h-5" />
+                    <span className="text-sm font-medium max-w-[100px] truncate">{displayName}</span>
                 </button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
@@ -33,9 +38,11 @@ export default function UserMenu() {
                         My Account
                     </DropdownMenu.Label>
                     <DropdownMenu.Separator className="h-px bg-secondary m-1" />
-                    <DropdownMenu.Item className="group flex items-center px-2 py-2 text-sm outline-none cursor-pointer hover:bg-secondary/20 focus:bg-secondary/20 text-foreground transition-colors">
-                        <User className="mr-2 h-4 w-4 opacity-70 group-hover:text-primary" />
-                        <span>Profile</span>
+                    <DropdownMenu.Item asChild className="group flex items-center px-2 py-2 text-sm outline-none cursor-pointer hover:bg-secondary/20 focus:bg-secondary/20 text-foreground transition-colors">
+                        <Link href="/account">
+                            <User className="mr-2 h-4 w-4 opacity-70 group-hover:text-primary" />
+                            <span>Profile</span>
+                        </Link>
                     </DropdownMenu.Item>
                     <DropdownMenu.Item className="group flex items-center px-2 py-2 text-sm outline-none cursor-pointer hover:bg-secondary/20 focus:bg-secondary/20 text-foreground transition-colors">
                         <Heart className="mr-2 h-4 w-4 opacity-70 group-hover:text-primary" />
