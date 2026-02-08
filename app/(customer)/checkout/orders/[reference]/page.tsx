@@ -1,5 +1,8 @@
 "use client";
 
+import { generateDepositSTKPush } from "@/services/mpesa";
+import { useRouter } from "next/navigation";
+import { useState, use } from "react";
 import { useFetchOrder } from "@/hooks/orders/actions";
 import { formatCurrency } from "@/components/dashboard/utils";
 import {
@@ -7,242 +10,159 @@ import {
   CheckCircle2,
   AlertCircle,
   Phone,
+  RefreshCw,
+  Lock,
+  ChevronLeft,
   ShoppingBag,
-  MapPin,
-  Copy,
-  CreditCard,
+  Smartphone,
+  Check,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-import { use } from "react";
 import { toast } from "react-hot-toast";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { Button } from "@headlessui/react";
 
 export default function OrderPaymentPage({
   params,
 }: {
   params: Promise<{ reference: string }>;
 }) {
+  const router = useRouter();
   const { reference } = use(params);
-  const {
-    data: order,
-    isLoading,
-    refetch,
-    isRefetching,
-  } = useFetchOrder(reference);
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard!");
+  const { data: order, isLoading, refetch } = useFetchOrder(reference);
+  const [isPolling, setIsPolling] = useState(false);
+  const [paymentMessage, setPaymentMessage] = useState("");
+
+  const pollPaymentStatus = async () => {
+    setIsPolling(true);
+    const maxRetries = 24;
+    let tries = 0;
+
+    const interval = setInterval(async () => {
+      tries++;
+      try {
+        const result = await refetch();
+        const currentStatus = result?.data?.payment_status;
+
+        if (currentStatus === "PAID" || currentStatus === "COMPLETED") {
+          clearInterval(interval);
+          setPaymentMessage("Payment Successful! Redirecting...");
+          toast.success("Payment Received!");
+          setTimeout(() => {
+            router.push("/orders");
+          }, 2000);
+          setIsPolling(false);
+        } else if (
+          ["FAILED", "CANCELLED", "REVERSED"].includes(currentStatus || "")
+        ) {
+          clearInterval(interval);
+          setPaymentMessage(
+            `Payment ${
+              currentStatus ? currentStatus.toLowerCase() : "failed"
+            }. Please try again.`,
+          );
+          toast.error(`Payment ${currentStatus || "failed"}`);
+          setIsPolling(false);
+        } else if (tries >= maxRetries) {
+          clearInterval(interval);
+          setPaymentMessage(
+            "Payment verification timed out. Please check your messages.",
+          );
+          toast("Taking longer than expected...", { icon: "⏳" });
+          setIsPolling(false);
+        }
+      } catch (e) {
+        console.error("Polling error", e);
+      }
+    }, 5000);
   };
 
-  if (isLoading) {
+  if (isLoading && !order) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-[#FFF1F2]">
+        <Loader2 className="w-8 h-8 animate-spin text-[#C27848]" />
       </div>
     );
   }
 
   if (!order) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center space-y-4">
+      <div className="min-h-screen flex flex-col items-center justify-center space-y-4 bg-[#FFF1F2]">
         <AlertCircle className="w-16 h-16 text-red-400" />
-        <h1 className="text-2xl font-bold text-foreground">Order Not Found</h1>
-        <p className="text-muted-foreground">
-          The order you are looking for does not exist.
-        </p>
-        <Link href="/shop" className="text-primary hover:underline">
-          Return to Shop
+        <h1 className="text-2xl font-bold text-gray-900">Order Not Found</h1>
+        <Link
+          href="/shop"
+          className="text-[#C27848] hover:underline flex items-center gap-2"
+        >
+          <ChevronLeft className="w-4 h-4" /> Return to Shop
         </Link>
       </div>
     );
   }
 
-  const isPaid = order.payment_status === "PAID";
-  const currency = "KES"; // Assuming KES for now based on context, or could fetch from order items if needed
+  const isPaid =
+    order.payment_status === "PAID" || order.payment_status === "COMPLETED";
+  const currency = "KES";
+
+  const validationSchema = Yup.object().shape({
+    phone_number: Yup.string()
+      .required("Phone number is required")
+      .matches(
+        /^(2547|2541)\d{8}$/,
+        "Phone number must start with 2547 or 2541 and be 12 digits",
+      ),
+  });
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4 md:px-6 max-w-5xl">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl font-serif font-bold text-foreground">
-              Order{" "}
-              <span className="text-muted-foreground">#{order.reference}</span>
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Placed on {new Date(order.created_at).toLocaleDateString()} at{" "}
-              {new Date(order.created_at).toLocaleTimeString()}
-            </p>
-          </div>
-          <div
-            className={`px-4 py-1.5 rounded-full text-sm font-medium border flex items-center gap-2 ${
-              isPaid
-                ? "bg-green-50 text-green-700 border-green-200"
-                : "bg-yellow-50 text-yellow-700 border-yellow-200"
-            }`}
-          >
-            {isPaid ? (
-              <CheckCircle2 className="w-4 h-4" />
-            ) : (
-              <ClockIcon className="w-4 h-4" />
-            )}
-            {order.payment_status}
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#FFF1F2] max-w-7xl mx-auto">
+      <div className="container mx-auto space-y-6">
+        {/* Back Link */}
+        <Link
+          href="/shop"
+          className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 mb-2 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4 mr-1" /> Back to Shop
+        </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* LEFT COLUMN: Payment / Status */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Payment Section */}
-            {!isPaid && (
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-green-100">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-green-100 rounded-full text-green-600">
-                    <CreditCard className="w-5 h-5" />
-                  </div>
-                  <h2 className="text-xl font-medium text-foreground">
-                    Complete Payment
-                  </h2>
-                </div>
-
-                <div className="bg-green-50/50 rounded-md p-5 border border-green-100 mb-6">
-                  <p className="text-sm text-green-800 mb-4 leading-relaxed">
-                    An M-PESA payment prompt has been sent to{" "}
-                    <strong>{order.phone_number}</strong>. Please check your
-                    phone and enter your PIN to complete the transaction.
-                  </p>
-
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground bg-white p-3 rounded border border-green-100/50">
-                    <Loader2 className="w-4 h-4 animate-spin text-green-600" />
-                    Waiting for payment confirmation...
-                  </div>
-                </div>
-
-                <div className="text-sm text-muted-foreground">
-                  <p className="mb-2 font-medium text-foreground">
-                    Didn&apos;t receive a prompt?
-                  </p>
-                  <ul className="list-disc list-inside space-y-1 ml-1">
-                    <li>Ensure your phone is unlocked and screen is on.</li>
-                    <li>Check if you have sufficient funds.</li>
-                    {/* Hypothetical manual paybill option */}
-                    <li>
-                      You can also pay manually via Paybill:
-                      <span className="font-mono bg-gray-100 px-1 py-0.5 rounded ml-1 text-foreground">
-                        123456
-                      </span>
-                      (Account:{" "}
-                      <span className="font-mono bg-gray-100 px-1 py-0.5 rounded text-foreground">
-                        {order.reference}
-                      </span>
-                      )
-                    </li>
-                  </ul>
-                </div>
-
-                <button
-                  onClick={() => refetch()}
-                  disabled={isRefetching}
-                  className="mt-6 px-6 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
-                >
-                  {isRefetching ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <CheckCircle2 className="w-4 h-4" />
-                  )}
-                  I have paid, check status
-                </button>
-              </div>
-            )}
-
-            {isPaid && (
-              <div className="bg-white p-8 rounded-lg shadow-sm border border-green-100 text-center py-12">
-                <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle2 className="w-8 h-8" />
-                </div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">
-                  Payment Successful!
-                </h2>
-                <p className="text-muted-foreground max-w-md mx-auto">
-                  Your order has been confirmed and will be processed for
-                  delivery. You will receive updates via SMS.
-                </p>
-                <div className="mt-8 flex justify-center gap-4">
-                  <Link
-                    href="/account/orders"
-                    className="px-6 py-2 bg-secondary text-secondary-foreground rounded-sm font-medium hover:bg-secondary/80"
-                  >
-                    View All Orders
-                  </Link>
-                  <Link
-                    href="/shop"
-                    className="px-6 py-2 bg-primary text-primary-foreground rounded-sm font-medium hover:bg-primary/90"
-                  >
-                    Continue Shopping
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {/* Delivery Info */}
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-border">
-              <h3 className="font-medium text-foreground mb-4 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-primary" />
-                Delivery Information
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-muted-foreground block mb-1">
-                    Pickup Station
-                  </span>
-                  <span className="font-medium text-foreground">
-                    {/* We might need to fetch station name separately if not in order object, but for now assuming we display what we have */}
-                    Station Code: {order.pickup_station}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground block mb-1">
-                    Contact Number
-                  </span>
-                  <span className="font-medium text-foreground">
-                    {order.phone_number}
-                  </span>
-                </div>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* CARD 1: YOUR ORDER */}
+          <div className="bg-white rounded-[24px] shadow overflow-hidden">
+            <div className="p-6">
+              <h1 className="text-3xl font-serif font-medium leading-tight drop-shadow-sm">
+                Your Order
+              </h1>
+              <p className="text-white/90 text-sm font-medium mt-1">
+                {order.items.length} items
+              </p>
             </div>
-          </div>
-
-          {/* RIGHT COLUMN: Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-border sticky top-24">
-              <h3 className="font-serif font-bold text-xl text-foreground mb-6">
-                Order Summary
-              </h3>
-
+            <div className="p-6">
+              {/* Items List */}
               <div className="space-y-4 mb-6">
                 {order.items.map((item) => (
-                  <div key={item.id} className="flex gap-3 text-sm">
-                    <div className="flex-1">
-                      {/* We don't have images in OrderItem interface yet, so falling back to name/qty */}
-                      <div className="font-medium text-foreground line-clamp-2">
-                        {item.variant_sku}
-                      </div>
-                      {/* Ideally we'd map SKU to Name or have Name in OrderItem */}
-                      <div className="text-xs text-muted-foreground mt-0.5">
-                        Qty: {item.quantity}
-                      </div>
+                  <div key={item.id} className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-[#F5F5F4] flex items-center justify-center text-xs font-bold text-gray-500 shrink-0">
+                      {item.quantity}x
                     </div>
-                    <div className="font-medium text-foreground">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {item.variant_sku}
+                      </p>
+                    </div>
+                    <div className="text-sm font-bold text-gray-900">
                       {formatCurrency(parseFloat(item.price), currency)}
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t border-border pt-4 space-y-2 text-sm">
+              <div className="h-px bg-gray-100 w-full mb-4" />
+
+              {/* Totals */}
+              <div className="space-y-2 text-sm text-gray-500">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal</span>
+                  <span>Subtotal</span>
                   <span>
                     {formatCurrency(
                       parseFloat(order.total_amount) -
@@ -252,40 +172,191 @@ export default function OrderPaymentPage({
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Delivery</span>
+                  <span>Delivery</span>
                   <span>
                     {formatCurrency(parseFloat(order.delivery_cost), currency)}
                   </span>
                 </div>
-                <div className="flex justify-between pt-2 border-t border-border font-bold text-lg mt-2">
-                  <span>Total</span>
-                  <span>
-                    {formatCurrency(parseFloat(order.total_amount), currency)}
-                  </span>
-                </div>
               </div>
+
+              <div className="h-px bg-gray-100 w-full my-4 border-dashed" />
+
+              <div className="flex justify-between items-baseline">
+                <span className="text-base font-bold text-gray-900">Total</span>
+                <span className="text-xl font-bold text-[#C27848] font-serif">
+                  {formatCurrency(parseFloat(order.total_amount), currency)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* CARD 2: PAYMENT */}
+          <div className="bg-white rounded-[24px] shadow overflow-hidden p-6">
+            {!isPaid ? (
+              <>
+                <h2 className="text-xl font-serif font-bold text-gray-900 mb-1">
+                  Pay with Mobile Money
+                </h2>
+                <p className="text-sm text-gray-500 mb-6">
+                  Enter your phone number to receive a payment prompt
+                </p>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Select Provider
+                  </label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {/* M-Pesa Option (Selected) */}
+                    <div className="relative group cursor-pointer">
+                      <div className="border-[2px] border-[#C27848] rounded-xl p-4 flex flex-col items-center justify-center gap-2 bg-[#FFFAF5] transition-all relative overflow-hidden">
+                        <div className="absolute top-2 right-2">
+                          <div className="w-4 h-4 bg-[#C27848] rounded-full flex items-center justify-center text-white">
+                            <Check className="w-3 h-3" />
+                          </div>
+                        </div>
+                        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-1">
+                          <Smartphone className="w-5 h-5" />
+                        </div>
+                        <span className="text-xs font-bold text-gray-900">
+                          M-Pesa
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Formik
+                  initialValues={{ phone_number: order.phone_number || "" }}
+                  validationSchema={validationSchema}
+                  onSubmit={async (values, { setSubmitting }) => {
+                    setPaymentMessage("Sending STK Push...");
+                    try {
+                      const payload = {
+                        phone_number: parseInt(values.phone_number, 10),
+                        order_reference: order.reference,
+                      };
+                      await generateDepositSTKPush(payload);
+                      toast.success("Push sent! Check your phone.");
+                      setPaymentMessage(
+                        "STK Push sent! Please check your phone.",
+                      );
+                      pollPaymentStatus();
+                    } catch (error) {
+                      console.error(error);
+                      toast.error("Failed to initiate payment");
+                      setPaymentMessage(
+                        "Failed to initiate payment. Please try again.",
+                      );
+                    } finally {
+                      setSubmitting(false);
+                    }
+                  }}
+                >
+                  {({ isSubmitting, errors, touched }) => (
+                    <Form className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Phone Number
+                        </label>
+                        <div className="relative rounded-xl border border-gray-200 shadow-sm overflow-hidden flex transition-all focus-within:ring-2 focus-within:ring-[#C27848]/20 focus-within:border-[#C27848]">
+                          <div className="bg-gray-50 px-4 flex items-center border-r border-gray-200">
+                            <Phone className="w-4 h-4 text-gray-400 mr-2" />
+                            <span className="text-gray-600 font-medium text-sm">
+                              +254
+                            </span>
+                          </div>
+                          <Field
+                            name="phone_number"
+                            type="tel"
+                            className="block w-full py-3 px-4 text-gray-900 placeholder-gray-400 focus:outline-none text-base"
+                            placeholder="7XX XXX XXX"
+                          />
+                        </div>
+                        <ErrorMessage
+                          name="phone_number"
+                          component="p"
+                          className="mt-1.5 text-xs text-red-500 flex items-center gap-1"
+                        >
+                          <AlertCircle className="w-3 h-3" />
+                          {errors.phone_number &&
+                            "Enter valid M-Pesa number (e.g., 712345678)"}
+                        </ErrorMessage>
+                      </div>
+
+                      {/* Status Message */}
+                      {(isPolling || paymentMessage) && (
+                        <div
+                          className={`p-4 rounded-xl flex items-center gap-3 text-sm ${
+                            paymentMessage.includes("Successful")
+                              ? "bg-green-50 text-green-700"
+                              : paymentMessage.includes("Failed")
+                                ? "bg-red-50 text-red-700"
+                                : "bg-blue-50 text-blue-700"
+                          }`}
+                        >
+                          {isPolling && (
+                            <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                          )}
+                          <p className="font-medium">
+                            {isPolling
+                              ? "Check your phone to enter PIN"
+                              : paymentMessage}
+                          </p>
+                        </div>
+                      )}
+
+                      <Button
+                        type="submit"
+                        disabled={isSubmitting || isPolling}
+                        className="w-full rounded bg-green-500 text-white py-3"
+                      >
+                        {isSubmitting ? (
+                          <Loader2 className="w-6 h-6 animate-spin" />
+                        ) : (
+                          `Pay ${formatCurrency(parseFloat(order.total_amount), currency)}`
+                        )}
+                      </Button>
+
+                      <button
+                        type="button"
+                        onClick={() => refetch()}
+                        className="w-full text-center text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center gap-1.5"
+                      >
+                        <RefreshCw
+                          className={`w-3 h-3 ${isLoading ? "animate-spin" : ""}`}
+                        />
+                        I&apos;ve already paid
+                      </button>
+                    </Form>
+                  )}
+                </Formik>
+              </>
+            ) : (
+              <div className="text-center py-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600 animate-in zoom-in duration-300">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-serif font-bold text-gray-900 mb-2">
+                  Payment Completed
+                </h2>
+                <p className="text-gray-500 mb-8">
+                  Thank you, your order has been processed.
+                </p>
+                <Link
+                  href="/orders"
+                  className="block w-full bg-gray-900 text-white h-12 rounded-xl font-bold flex items-center justify-center transition-colors hover:bg-black"
+                >
+                  View My Orders
+                </Link>
+              </div>
+            )}
+
+            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400">
+              <Lock className="w-3 h-3" /> Secured & encrypted payment
             </div>
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-function ClockIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
-    </svg>
   );
 }
