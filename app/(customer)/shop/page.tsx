@@ -4,12 +4,15 @@ import { useFetchCategories } from "@/hooks/categories/actions";
 import { useFetchProducts } from "@/hooks/products/actions";
 import ProductCard from "@/components/products/ProductCard";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function AllProductsPage() {
     const { data: products, isLoading: isLoadingProducts } = useFetchProducts();
     const { data: categories, isLoading: isLoadingCategories } = useFetchCategories();
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const selectedCategory = searchParams.get("category");
+    const selectedSubcategory = searchParams.get("subcategory");
 
     // Filter out categories that have no products
     const categoriesWithProducts = categories?.filter((category) => {
@@ -23,9 +26,15 @@ export default function AllProductsPage() {
         );
     }) || [];
 
-    // Filter products based on selected category
+    // Filter products based on selected category or subcategory
     const filteredProducts = products?.filter((p) => {
         if (!p.is_active) return false;
+
+        // Prioritize subcategory filter
+        if (selectedSubcategory) {
+            return p.sub_category.some(sub => sub.reference === selectedSubcategory);
+        }
+
         if (!selectedCategory) return true;
 
         // Find the selected category object
@@ -38,6 +47,15 @@ export default function AllProductsPage() {
         // Check if product belongs to any of these subcategories
         return p.sub_category.some(sub => subCategoryRefs.includes(sub.reference));
     }) || [];
+
+    const handleCategoryClick = (categoryRef: string | null) => {
+        // When clicking a main category, we clear the subcategory
+        if (categoryRef) {
+            router.push(`/shop?category=${categoryRef}`);
+        } else {
+            router.push("/shop");
+        }
+    };
 
     const isLoading = isLoadingProducts || isLoadingCategories;
 
@@ -62,11 +80,10 @@ export default function AllProductsPage() {
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
 
                     {/* Categories - Horizontal Scrollable */}
-                    {/* Categories - Horizontal Scrollable */}
                     <div className="w-full md:w-auto overflow-x-auto pb-4 md:pb-0 hide-scrollbar">
                         <div className="flex flex-nowrap md:flex-wrap gap-2 min-w-max px-1">
                             <button
-                                onClick={() => setSelectedCategory(null)}
+                                onClick={() => handleCategoryClick(null)}
                                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border whitespace-nowrap ${selectedCategory === null
                                     ? "bg-foreground text-background border-foreground"
                                     : "bg-background text-foreground border-border hover:border-foreground"
@@ -77,7 +94,7 @@ export default function AllProductsPage() {
                             {categoriesWithProducts.map((category) => (
                                 <button
                                     key={category.reference}
-                                    onClick={() => setSelectedCategory(category.reference)}
+                                    onClick={() => handleCategoryClick(category.reference)}
                                     className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border whitespace-nowrap ${selectedCategory === category.reference
                                         ? "bg-foreground text-background border-foreground"
                                         : "bg-background text-foreground border-border hover:border-foreground"
@@ -122,7 +139,7 @@ export default function AllProductsPage() {
                         <div className="text-center py-20 bg-secondary/5 rounded-lg border border-dashed border-secondary/30">
                             <p className="text-foreground/60 mb-4">No products found in this category.</p>
                             <button
-                                onClick={() => setSelectedCategory(null)}
+                                onClick={() => handleCategoryClick(null)}
                                 className="text-primary font-medium hover:underline underline-offset-4"
                             >
                                 Clear filters

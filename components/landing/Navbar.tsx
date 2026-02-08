@@ -70,7 +70,7 @@ export default function Navbar() {
                             className="group/cat relative"
                           >
                             <Link
-                              href={`/shop/${category.reference}`}
+                              href={`/shop?category=${category.reference}`}
                               className="block px-4 py-2 text-sm text-foreground hover:bg-secondary/5 hover:text-primary transition-colors font-medium flex justify-between items-center"
                             >
                               {category.name}
@@ -85,7 +85,7 @@ export default function Navbar() {
                                     .map((sub) => (
                                       <Link
                                         key={sub.reference}
-                                        href={`/shop/category/${sub.reference}`} // Adjusted route to distinguish
+                                        href={`/shop?subcategory=${sub.reference}`} // Adjusted route to use query param
                                         className="block px-4 py-1.5 text-xs text-foreground/70 hover:text-primary transition-colors"
                                       >
                                         {sub.name}
@@ -190,7 +190,7 @@ export default function Navbar() {
                     {activeCategories.map((category) => (
                       <div key={category.reference}>
                         <Link
-                          href={`/shop/${category.reference}`}
+                          href={`/shop?category=${category.reference}`}
                           onClick={() => setIsMobileMenuOpen(false)}
                           className="text-base text-foreground/90 font-medium"
                         >
@@ -205,7 +205,7 @@ export default function Navbar() {
                                 .map((sub) => (
                                   <Link
                                     key={sub.reference}
-                                    href={`/shop/category/${sub.reference}`}
+                                    href={`/shop?subcategory=${sub.reference}`}
                                     className="text-sm text-foreground/70"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                   >

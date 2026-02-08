@@ -18,7 +18,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     const isRange = minPrice !== maxPrice;
 
     return (
-        <div className="group cursor-pointer">
+        <Link href={`/shop/${product.reference}`} className="group cursor-pointer block">
             {/* Image Container */}
             <div className="relative aspect-square overflow-hidden bg-secondary/10 mb-3">
                 <Image
@@ -54,6 +54,6 @@ export default function ProductCard({ product }: ProductCardProps) {
                     {product.sub_category[0]?.name || "General"}
                 </p>
             </div>
-        </div>
+        </Link>
     );
 }
