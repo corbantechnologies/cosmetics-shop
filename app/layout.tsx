@@ -4,6 +4,7 @@ import "./globals.css";
 import NextAuthProvider from "@/providers/NextAuthProvider";
 import TanstackQueryProvider from "@/providers/TanstackQueryProvider";
 import { Toaster } from "react-hot-toast";
+import { CartProvider } from "@/context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,10 +39,10 @@ export default function RootLayout({
 
         <NextAuthProvider>
           <TanstackQueryProvider>
-            {children}
+            <CartProvider>{children}</CartProvider>
           </TanstackQueryProvider>
         </NextAuthProvider>
       </body>
-    </html >
+    </html>
   );
 }
