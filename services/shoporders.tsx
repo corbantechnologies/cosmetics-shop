@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 "use client";
+// for the vendors
 
-import { apiActions, apiMultipartActions } from "@/tools/axios";
+import { apiActions } from "@/tools/axios";
 import { AxiosResponse } from "axios";
 import { PaginatedResponse } from "./general";
 

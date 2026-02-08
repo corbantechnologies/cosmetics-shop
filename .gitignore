@@ -43,3 +43,7 @@ next-env.d.ts
 # sample
 /samples
 /sample
+
+# mpesa
+.env.local
+MpesaPayment.jsx
