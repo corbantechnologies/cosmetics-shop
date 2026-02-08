@@ -1,6 +1,7 @@
 "use client";
 
-import { useFetchProduct } from "@/hooks/products/actions";
+import { useFetchProduct, useFetchProducts } from "@/hooks/products/actions";
+import ProductCard from "@/components/products/ProductCard";
 import { formatCurrency } from "@/components/dashboard/utils";
 import { Loader2, Heart, Share2, Minus, Plus, ChevronRight } from "lucide-react";
 import Image from "next/image";
@@ -12,6 +13,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ refer
     // Unwrap params using React.use()
     const resolvedParams = use(params);
     const { data: product, isLoading } = useFetchProduct(resolvedParams.reference);
+    const { data: allProducts } = useFetchProducts();
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
     const [globalQuantity, setGlobalQuantity] = useState(1);
@@ -35,6 +37,15 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ refer
     const { variants, images } = product;
     // Determine if we have multiple variants or variants with specific attributes
     const hasMultipleVariants = variants.length > 1;
+
+    // Filter related products (same subcategory, exclude current product)
+    const relatedProducts = allProducts?.filter(p =>
+        p.reference !== product.reference &&
+        p.is_active &&
+        p.sub_category.some(sub =>
+            product.sub_category.some(currentSub => currentSub.reference === sub.reference)
+        )
+    ).slice(0, 4) || [];
 
     // Handle Quantity Change for specific variants
     const handleVariantQuantityChange = (variantId: string, delta: number, maxStock: number) => {
@@ -76,12 +87,12 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ refer
                     <span className="text-foreground font-medium truncate">{product.name}</span>
                 </nav>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 mb-20">
 
                     {/* Left Column: Image Gallery */}
                     <div className="space-y-4">
                         {/* Main Image */}
-                        <div className="relative aspect-square bg-secondary/10 rounded-none overflow-hidden">
+                        <div className="relative aspect-square bg-secondary/10 rounded-none overflow-hidden max-w-xl mx-auto md:mx-0">
                             <Image
                                 src={mainImage}
                                 alt={product.name}
@@ -140,19 +151,11 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ refer
                             <p>{product.description}</p>
                         </div>
 
-                        {/* Attributes/Features Placeholders (based on screenshot) */}
-                        {/* These would ideally come from product.features or description parsing */}
-                        {/* <div className="space-y-1 text-sm text-foreground/70 mb-8">
-                             <p>• Material: 100% organic cotton</p>
-                             <p>• Wash with similar colors</p>
-                        </div> */}
-
                         {/* Variants Handling */}
                         {hasMultipleVariants ? (
                             <div className="border-t border-border pt-6">
                                 <div className="flex justify-between items-center mb-4">
                                     <h3 className="font-medium text-foreground">Select Options</h3>
-                                    {/* <a href="#" className="text-sm text-primary underline">Size Guide</a> */}
                                 </div>
 
                                 <div className="space-y-3">
@@ -274,9 +277,23 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ refer
                                 <Share2 className="w-4 h-4" /> Share this product
                             </button>
                         </div>
-
                     </div>
                 </div>
+
+                {/* We Think You'll Love This */}
+                {relatedProducts.length > 0 && (
+                    <div className="mt-20 border-t border-border pt-12">
+                        <h2 className="text-2xl md:text-3xl font-serif font-medium text-foreground mb-8">
+                            We Think You'll Love This
+                        </h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            {relatedProducts.map((product) => (
+                                <ProductCard key={product.reference} product={product} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
             </div>
         </div>
     );
