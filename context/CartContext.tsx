@@ -17,7 +17,6 @@ import {
   useUpdateCartItem,
   useDeleteCartItem,
 } from "@/hooks/cartitems/mutations";
-import { toast } from "react-hot-toast";
 
 // Extended interface for Item input (used especially for guest cart)
 export interface CartItemInput {
@@ -42,7 +41,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const isAuthenticated = status === "authenticated";
 
   // ── Authenticated cart ──
