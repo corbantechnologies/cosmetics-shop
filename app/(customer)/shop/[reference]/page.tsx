@@ -1,7 +1,7 @@
 "use client";
 
 import { useFetchProduct, useFetchProducts } from "@/hooks/products/actions";
-import { useAddToCart } from "@/hooks/cartitems/mutations";
+import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/products/ProductCard";
 import AddToCartButton from "@/components/products/AddToCartButton";
 import { formatCurrency } from "@/components/dashboard/utils";
@@ -22,7 +22,7 @@ export default function ProductDetailsPage({
     resolvedParams.reference,
   );
   const { data: allProducts } = useFetchProducts();
-  const { mutateAsync: addToCart, isPending: isAddingToCart } = useAddToCart();
+  const { addToCart, isLoading: isAddingToCart } = useCart();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
@@ -93,10 +93,19 @@ export default function ProductDetailsPage({
       // Use v.sku
       await Promise.all(
         variantsToAdd.map((v) =>
-          addToCart({ variant: v.sku, quantity: quantities[v.sku] }),
+          addToCart({
+            variant_sku: v.sku,
+            quantity: quantities[v.sku],
+            // Extra details for guest cart
+            variant_name: v.product_name || product.name,
+            variant_image: mainImage,
+            variant_price: parseFloat(v.price.toString()),
+            shop_currency: product.shop_details.currency,
+          }),
         ),
       );
       setQuantities({});
+      toast.success("Items added to cart");
     } catch (error) {
       console.error("Error adding multiple items", error);
     }
@@ -363,6 +372,12 @@ export default function ProductDetailsPage({
                           variantSKU={variants[0].sku} // Updated prop name
                           quantity={globalQuantity}
                           stock={variants[0].stock}
+                          variantName={product.name}
+                          variantImage={mainImage}
+                          variantPrice={parseFloat(
+                            variants[0].price.toString(),
+                          )}
+                          shopCurrency={product.shop_details.currency}
                         />
                       </div>
                     )}

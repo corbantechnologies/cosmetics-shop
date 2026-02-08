@@ -1,6 +1,6 @@
 "use client";
 
-import { useFetchCart } from "@/hooks/cart/actions";
+import { useCart } from "@/context/CartContext";
 import { X, ShoppingBag, Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import CartItem from "./CartItem";
@@ -13,7 +13,7 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { data: cart, isLoading, isError } = useFetchCart();
+  const { cart, isLoading } = useCart();
   const drawerRef = useRef<HTMLDivElement>(null);
 
   // Close on click outside
@@ -73,16 +73,6 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 Loading your cart...
               </p>
             </div>
-          ) : isError ? (
-            <div className="h-full flex flex-col items-center justify-center space-y-4 text-center">
-              <p className="text-sm text-red-500">Failed to load cart.</p>
-              <button
-                onClick={() => window.location.reload()}
-                className="text-xs underline text-muted-foreground hover:text-foreground"
-              >
-                Try again
-              </button>
-            </div>
           ) : !cart || cart.items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center space-y-4 text-center">
               <div className="w-16 h-16 bg-secondary/20 rounded-full flex items-center justify-center mb-2">
@@ -92,7 +82,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 Your cart is empty
               </p>
               <p className="text-sm text-muted-foreground max-w-[200px]">
-                Looks like you haven't added anything to your cart yet.
+                Looks like you haven&apos;t added anything to your cart yet.
               </p>
               <button
                 onClick={onClose}

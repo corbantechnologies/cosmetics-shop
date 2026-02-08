@@ -1,8 +1,5 @@
-"use client";
-
-import { useAddToCart } from "@/hooks/cartitems/mutations";
+import { useCart } from "@/context/CartContext";
 import { Loader2, ShoppingCart } from "lucide-react";
-import { useState } from "react";
 
 interface AddToCartButtonProps {
   variantSKU: string;
@@ -10,6 +7,11 @@ interface AddToCartButtonProps {
   stock: number;
   disabled?: boolean;
   className?: string;
+  // Details for Guest Cart
+  variantName?: string;
+  variantPrice?: number;
+  variantImage?: string;
+  shopCurrency?: string;
 }
 
 export default function AddToCartButton({
@@ -18,21 +20,30 @@ export default function AddToCartButton({
   stock,
   disabled,
   className = "",
+  variantName,
+  variantPrice,
+  variantImage,
+  shopCurrency,
 }: AddToCartButtonProps) {
-  const { mutate: addToCart, isPending } = useAddToCart();
+  const { addToCart, isLoading } = useCart();
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!variantSKU) {
       console.error("No variantSKU provided");
       return;
     }
-    // API expects SKU, so we assume variantId passed here IS the SKU or we need to rename prop.
-    // Looking at usage in page.tsx, we passed `variants[0].id`. We need to pass `variants[0].sku`.
-    addToCart({ variant: variantSKU, quantity });
+    await addToCart({
+      variant_sku: variantSKU,
+      quantity,
+      variant_name: variantName,
+      variant_price: variantPrice,
+      variant_image: variantImage,
+      shop_currency: shopCurrency,
+    });
   };
 
   const isOutOfStock = stock <= 0;
-  const isDisabled = disabled || isPending || isOutOfStock;
+  const isDisabled = disabled || isLoading || isOutOfStock;
 
   return (
     <button
@@ -40,12 +51,12 @@ export default function AddToCartButton({
       disabled={isDisabled}
       className={`w-full bg-primary hover:bg-primary/90 text-primary-foreground py-4 rounded-md font-medium text-lg transition-colors flex items-center justify-center gap-2 ${className}`}
     >
-      {isPending ? (
+      {isLoading ? (
         <Loader2 className="w-5 h-5 animate-spin" />
       ) : (
         <ShoppingCart className="w-5 h-5" />
       )}
-      {isPending ? "Adding..." : isOutOfStock ? "Out of Stock" : "Add to Cart"}
+      {isLoading ? "Adding..." : isOutOfStock ? "Out of Stock" : "Add to Cart"}
     </button>
   );
 }
