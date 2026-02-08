@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,7 +13,8 @@ export const useCheckoutCart = () => {
   return useMutation({
     mutationFn: (data: { pickup_station: string; phone_number: string }) =>
       checkoutCart(data, header),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Checkout successful, received data:", data);
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       toast.success("Order placed successfully!");

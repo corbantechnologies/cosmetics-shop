@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useFetchCart } from "@/hooks/cart/actions";
@@ -20,15 +21,18 @@ import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import PickupStationSelector from "@/components/checkout/PickupStationSelector";
+import { toast } from "react-hot-toast";
+import { checkoutCart } from "@/services/cart";
+import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const { data: cart, isLoading: isCartLoading } = useFetchCart();
+  const [checkingOut, setIsCheckingOut] = useState(false);
   const { data: pickupStations, isLoading: isStationsLoading } =
     useFetchPickupStations();
-  const { mutate: checkout, isPending: isCheckingOut } = useCheckoutCart();
-
+  const header = useAxiosAuth();
   const [selectedStationCode, setSelectedStationCode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
@@ -36,26 +40,47 @@ export default function CheckoutPage() {
     (s) => s.station_code === selectedStationCode,
   );
 
-  const handleCheckout = () => {
-    if (!selectedStationCode) {
-      alert("Please select a pickup station");
-      return;
-    }
-    if (!phoneNumber) {
-      alert("Please enter a phone number");
-      return;
-    }
+const handleCheckout = async () => {
+  if (!selectedStationCode) {
+    toast.error("Please select a pickup station");
+    return;
+  }
+  if (!phoneNumber) {
+    toast.error("Please enter a phone number");
+    return;
+  }
 
-    checkout(
-      { pickup_station: selectedStationCode, phone_number: phoneNumber },
+  try {
+    setIsCheckingOut(true);
+
+    const order = await checkoutCart(
       {
-        onSuccess: (order) => {
-          // Redirect to order payment page using the returned order reference
-          router.push(`/checkout/orders/${order.reference}`);
-        },
+        pickup_station: selectedStationCode,
+        phone_number: phoneNumber,
       },
+      header,
     );
-  };
+
+    // ── Only reaches here if request was successful ──
+    toast.success("Order placed successfully!");
+
+    router.push(`/checkout/orders/${order.order_reference}`);
+  } catch (error: any) {
+    console.error("Checkout failed:", error);
+
+    // Try to show meaningful message
+    const message =
+      error?.response?.data?.detail ||
+      error?.response?.data?.message ||
+      error?.response?.data?.non_field_errors?.[0] ||
+      error.message ||
+      "Failed to place order. Please try again.";
+
+    toast.error(message);
+  } finally {
+    setIsCheckingOut(false);
+  }
+};
 
   if (isCartLoading || isStationsLoading) {
     return (
@@ -110,7 +135,7 @@ export default function CheckoutPage() {
                     Full Name
                   </label>
                   <div className="p-3 bg-secondary/10 rounded-sm text-foreground">
-                    {session?.user?.name || "Guest Checkout"}
+                    {session?.user?.first_name + " " + session?.user?.last_name || "Guest Checkout"}
                   </div>
                 </div>
                 <div>
@@ -255,10 +280,10 @@ export default function CheckoutPage() {
 
               <button
                 onClick={handleCheckout}
-                disabled={isCheckingOut || !selectedStationCode || !phoneNumber}
+                disabled={checkingOut || !selectedStationCode || !phoneNumber}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-4 rounded-md font-medium text-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
               >
-                {isCheckingOut ? (
+                {checkingOut ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
                   <>
