@@ -33,10 +33,10 @@ export default function Footer() {
                     <div>
                         <h4 className="font-serif text-lg text-foreground mb-6">Shop</h4>
                         <ul className="space-y-4">
-                            <li><Link href="/shop" className="text-foreground/70 hover:text-primary transition-colors">All Products</Link></li>
-                            <li><Link href="/shop/skin-care" className="text-foreground/70 hover:text-primary transition-colors">Skin Care</Link></li>
-                            <li><Link href="/shop/makeup" className="text-foreground/70 hover:text-primary transition-colors">Makeup</Link></li>
-                            <li><Link href="/shop/sets" className="text-foreground/70 hover:text-primary transition-colors">Gift Sets</Link></li>
+                            <li><Link href="/" className="text-foreground/70 hover:text-primary transition-colors">All Products</Link></li>
+                            <li><Link href="/" className="text-foreground/70 hover:text-primary transition-colors">Skin Care</Link></li>
+                            <li><Link href="/" className="text-foreground/70 hover:text-primary transition-colors">Makeup</Link></li>
+                            <li><Link href="/" className="text-foreground/70 hover:text-primary transition-colors">Gift Sets</Link></li>
                         </ul>
                     </div>
 
@@ -44,10 +44,10 @@ export default function Footer() {
                     <div>
                         <h4 className="font-serif text-lg text-foreground mb-6">Company</h4>
                         <ul className="space-y-4">
-                            <li><Link href="/about" className="text-foreground/70 hover:text-primary transition-colors">Our Story</Link></li>
-                            <li><Link href="/sustainability" className="text-foreground/70 hover:text-primary transition-colors">Sustainability</Link></li>
-                            <li><Link href="/careers" className="text-foreground/70 hover:text-primary transition-colors">Careers</Link></li>
-                            <li><Link href="/contact" className="text-foreground/70 hover:text-primary transition-colors">Contact Us</Link></li>
+                            <li><Link href="/" className="text-foreground/70 hover:text-primary transition-colors">Our Story</Link></li>
+                            <li><Link href="/" className="text-foreground/70 hover:text-primary transition-colors">Sustainability</Link></li>
+                            <li><Link href="/" className="text-foreground/70 hover:text-primary transition-colors">Careers</Link></li>
+                            <li><Link href="/" className="text-foreground/70 hover:text-primary transition-colors">Contact Us</Link></li>
                         </ul>
                     </div>
 
@@ -57,7 +57,7 @@ export default function Footer() {
                         <p className="text-foreground/70 mb-4">
                             Subscribe to receive updates, access to exclusive deals, and more.
                         </p>
-                        <form className="flex flex-col gap-3">
+                        {/* <form className="flex flex-col gap-3">
                             <input
                                 type="email"
                                 placeholder="Your email address"
@@ -66,15 +66,15 @@ export default function Footer() {
                             <button className="px-4 py-3 bg-foreground text-background hover:bg-primary hover:text-white transition-colors font-medium">
                                 Subscribe
                             </button>
-                        </form>
+                        </form> */}
                     </div>
                 </div>
 
                 <div className="border-t border-secondary/50 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-foreground/60">
                     <p>© 2026 Clate Cosmetics. All rights reserved.</p>
                     <div className="flex gap-6 mt-4 md:mt-0">
-                        <Link href="/privacy" className="hover:text-primary">Privacy Policy</Link>
-                        <Link href="/terms" className="hover:text-primary">Terms of Service</Link>
+                        <Link href="/" className="hover:text-primary">Privacy Policy</Link>
+                        <Link href="/" className="hover:text-primary">Terms of Service</Link>
                     </div>
                 </div>
             </div>

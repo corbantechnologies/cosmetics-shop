@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import "./animations.css";
 import NextAuthProvider from "@/providers/NextAuthProvider";
 import TanstackQueryProvider from "@/providers/TanstackQueryProvider";
+import { WishlistProvider } from "@/context/WishlistContext";
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
@@ -38,10 +40,10 @@ export default function RootLayout({
 
         <NextAuthProvider>
           <TanstackQueryProvider>
-            {children}
+            <WishlistProvider>{children}</WishlistProvider>
           </TanstackQueryProvider>
         </NextAuthProvider>
       </body>
-    </html >
+    </html>
   );
 }

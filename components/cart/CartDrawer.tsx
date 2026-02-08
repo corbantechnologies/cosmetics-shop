@@ -1,7 +1,7 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
-import { X, ShoppingBag, Loader2 } from "lucide-react";
+import { X, ShoppingBag } from "lucide-react";
 import { useEffect, useRef } from "react";
 import CartItem from "./CartItem";
 import { formatCurrency } from "@/components/dashboard/utils";
@@ -67,11 +67,17 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           {isLoading ? (
-            <div className="h-full flex flex-col items-center justify-center space-y-4">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">
-                Loading your cart...
-              </p>
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-4">
+                  <div className="skeleton w-20 h-20 rounded-sm" />
+                  <div className="flex-1 space-y-2">
+                    <div className="skeleton h-4 w-3/4" />
+                    <div className="skeleton h-3 w-1/2" />
+                    <div className="skeleton h-4 w-1/4" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : !cart || cart.items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center space-y-4 text-center">

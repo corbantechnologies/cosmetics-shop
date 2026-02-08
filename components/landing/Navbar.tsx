@@ -2,20 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import {
-  Search,
-  ShoppingBag,
-  User,
-  Menu,
-  X,
-  LogOut,
-  ChevronDown,
-} from "lucide-react";
+import { ShoppingBag, User, Menu, X, LogOut, ChevronDown } from "lucide-react";
 import UserMenu from "./UserMenu";
 import { useSession, signOut } from "next-auth/react";
 import { useFetchCategories } from "@/hooks/categories/actions";
 import CartDrawer from "../cart/CartDrawer";
 import { useCart } from "@/context/CartContext";
+import SearchBar from "../navigation/SearchBar";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -122,6 +115,11 @@ export default function Navbar() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Search Bar (Desktop) */}
+          <div className="hidden lg:block flex-1 max-w-md mx-8">
+            <SearchBar />
           </div>
 
           {/* Icons & Mobile Toggle */}

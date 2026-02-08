@@ -3,13 +3,13 @@
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
 
@@ -18,22 +18,53 @@
 }
 
 :root {
-  /* Warm/Cream Background */
-  --background: #F9F7F2; 
-  /* Charcoal for text, softer than black */
-  --foreground: #2C2C2C;
+  /* ===== Primary Palette ===== */
+  /* Softer cream, more luminous */
+  --background: #FDFCFA;
+  /* Deeper charcoal for better contrast */
+  --foreground: #1A1A1A;
 
-  /* Muted Rose / Terracotta */
-  --primary: #D4A373;
+  /* Rich terracotta - warmer, more luxurious */
+  --primary: #C27848;
   --primary-foreground: #FFFFFF;
+  /* Deeper on interaction */
+  --primary-hover: #A66236;
 
-  /* Soft Peach / Beige */
-  --secondary: #E6DCD3;
-  --secondary-foreground: #2C2C2C;
+  /* Warm sand */
+  --secondary: #F5F0E8;
+  --secondary-foreground: #1A1A1A;
 
-  /* Gold / darker accent */
-  --accent: #B5838D;
+  /* ===== Accent Colors ===== */
+  /* Metallic gold for premium touches */
+  --accent-gold: #D4A574;
+  /* Soft rose for feminine touches */
+  --accent-rose: #E8B4A8;
+  --accent: #D4A574;
   --accent-foreground: #FFFFFF;
+
+  /* ===== Semantic Colors ===== */
+  /* Muted sage green */
+  --success: #4A7C59;
+  --success-foreground: #FFFFFF;
+
+  /* Gold warning */
+  --warning: #D4A574;
+  --warning-foreground: #1A1A1A;
+
+  /* Muted terracotta red */
+  --error: #C85A54;
+  --error-foreground: #FFFFFF;
+
+  /* Soft blue-grey */
+  --info: #7B9AAA;
+  --info-foreground: #FFFFFF;
+
+  /* ===== UI Elements ===== */
+  --border: #E6DCD3;
+  --input: #E6DCD3;
+  --ring: #C27848;
+  --muted: #F5F0E8;
+  --muted-foreground: #6B6B6B;
 }
 
 body {
@@ -49,8 +80,24 @@ body {
   font-family: var(--font-serif), serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-serif), serif;
   font-weight: 600;
+}
+
+h1,
+h2 {
+  letter-spacing: -0.03em;
+}
+
+h3,
+h4,
+h5,
+h6 {
   letter-spacing: -0.02em;
 }

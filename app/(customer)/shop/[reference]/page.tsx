@@ -2,10 +2,11 @@
 
 import { useFetchProduct, useFetchProducts } from "@/hooks/products/actions";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import ProductCard from "@/components/products/ProductCard";
 import AddToCartButton from "@/components/products/AddToCartButton";
 import { formatCurrency } from "@/components/dashboard/utils";
-import { Loader2, Minus, Plus, ChevronRight } from "lucide-react";
+import { Loader2, Minus, Plus, ChevronRight, Heart } from "lucide-react";
 import Image from "next/image";
 import { useState, use } from "react";
 import Link from "next/link";
@@ -23,6 +24,7 @@ export default function ProductDetailsPage({
   );
   const { data: allProducts } = useFetchProducts();
   const { addToCart, isLoading: isAddingToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
@@ -46,6 +48,9 @@ export default function ProductDetailsPage({
 
   const { variants, images } = product;
   const hasMultipleVariants = variants.length > 1;
+
+  // Check if product is in wishlist
+  const inWishlist = isInWishlist(product.reference);
 
   // Filter related products
   const relatedProducts =
@@ -185,9 +190,29 @@ export default function ProductDetailsPage({
             <div className="mb-2 text-sm text-muted-foreground uppercase tracking-wider font-medium">
               {product.shop_details.name}
             </div>
-            <h1 className="text-3xl md:text-4xl font-serif font-medium text-foreground mb-4">
-              {product.name}
-            </h1>
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <h1 className="text-3xl md:text-4xl font-serif font-medium text-foreground">
+                {product.name}
+              </h1>
+              {/* Wishlist Button */}
+              <button
+                onClick={() => toggleWishlist(product.reference)}
+                className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
+                  inWishlist
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary/50 text-foreground hover:bg-primary hover:text-primary-foreground"
+                }`}
+                aria-label={
+                  inWishlist ? "Remove from wishlist" : "Add to wishlist"
+                }
+              >
+                <Heart
+                  className={`w-5 h-5 transition-all ${
+                    inWishlist ? "fill-current" : ""
+                  }`}
+                />
+              </button>
+            </div>
 
             {/* Price Display */}
             <div className="text-2xl font-medium text-primary mb-6">
