@@ -10,6 +10,7 @@ export interface Order {
   reference: string;
   customer: string;
   pickup_station: string;
+  pickup_station_name: string;
   delivery_cost: string;
   total_amount: string;
   phone_number: string;
