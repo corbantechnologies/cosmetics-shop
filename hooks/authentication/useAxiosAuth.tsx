@@ -1,18 +1,9 @@
 "use client";
 
-import { Session, User } from "next-auth";
 import { useSession } from "next-auth/react";
 
-interface CustomUser extends User {
-  token?: string;
-}
-
-interface CustomSession extends Session {
-  user?: CustomUser;
-}
-
 function useAxiosAuth() {
-  const { data: session } = useSession() as { data: CustomSession };
+  const { data: session } = useSession();
 
   const tokens = session?.user?.token;
 
