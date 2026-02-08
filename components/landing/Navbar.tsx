@@ -20,6 +20,7 @@ export default function Navbar() {
   const { data: categories } = useFetchCategories();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isShopOpen, setIsShopOpen] = useState(false);
+  const [isMobileShopOpen, setIsMobileShopOpen] = useState(false);
 
   const activeCategories = categories?.filter((c) => c.is_active) || [];
 
@@ -183,40 +184,49 @@ export default function Navbar() {
 
                 {/* Mobile Shop Section */}
                 <div>
-                  <div className="text-foreground font-medium py-2 border-b border-secondary/20 mb-2">
+                  <button
+                    onClick={() => setIsMobileShopOpen(!isMobileShopOpen)}
+                    className="flex w-full items-center justify-between text-foreground font-medium py-2 border-b border-secondary/20 mb-2"
+                  >
                     Shop
-                  </div>
-                  <div className="pl-4 flex flex-col space-y-3">
-                    {activeCategories.map((category) => (
-                      <div key={category.reference}>
-                        <Link
-                          href={`/shop?category=${category.reference}`}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="text-base text-foreground/90 font-medium"
-                        >
-                          {category.name}
-                        </Link>
-                        {/* Mobile Subcategories */}
-                        {category.subcategories &&
-                          category.subcategories.length > 0 && (
-                            <div className="pl-3 mt-1 flex flex-col space-y-2 border-l border-secondary/20 ml-1">
-                              {category.subcategories
-                                .filter((s) => s.is_active)
-                                .map((sub) => (
-                                  <Link
-                                    key={sub.reference}
-                                    href={`/shop?subcategory=${sub.reference}`}
-                                    className="text-sm text-foreground/70"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                  >
-                                    {sub.name}
-                                  </Link>
-                                ))}
-                            </div>
-                          )}
-                      </div>
-                    ))}
-                  </div>
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform duration-200 ${isMobileShopOpen ? "rotate-180" : ""
+                        }`}
+                    />
+                  </button>
+                  {isMobileShopOpen && (
+                    <div className="pl-4 flex flex-col space-y-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                      {activeCategories.map((category) => (
+                        <div key={category.reference}>
+                          <Link
+                            href={`/shop?category=${category.reference}`}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-base text-foreground/90 font-medium"
+                          >
+                            {category.name}
+                          </Link>
+                          {/* Mobile Subcategories */}
+                          {category.subcategories &&
+                            category.subcategories.length > 0 && (
+                              <div className="pl-3 mt-1 flex flex-col space-y-2 border-l border-secondary/20 ml-1">
+                                {category.subcategories
+                                  .filter((s) => s.is_active)
+                                  .map((sub) => (
+                                    <Link
+                                      key={sub.reference}
+                                      href={`/shop?subcategory=${sub.reference}`}
+                                      className="text-sm text-foreground/70"
+                                      onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                      {sub.name}
+                                    </Link>
+                                  ))}
+                              </div>
+                            )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {["Our Story", "Contact"].map((item) => (

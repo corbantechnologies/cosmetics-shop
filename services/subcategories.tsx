@@ -42,6 +42,17 @@ export const getSubCategoriesVendor = async (headers: {
   return response.data.results || [];
 };
 
+export const getSubCategoryVendor = async (
+  reference: string,
+  headers: { headers: { Authorization: string } },
+): Promise<SubCategory> => {
+  const response: AxiosResponse<SubCategory> = await apiActions.get(
+    `/api/v1/subcategories/${reference}/`,
+    headers,
+  );
+  return response.data;
+};
+
 export const createSubCategory = async (
   data: createSubCategory,
   headers: { headers: { Authorization: string } },

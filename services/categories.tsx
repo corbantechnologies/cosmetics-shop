@@ -54,6 +54,17 @@ export const getCategoriesVendor = async (headers: {
   return response.data.results || [];
 };
 
+export const getCategoryVendor = async (reference: string, headers: {
+  headers: { Authorization: string };
+}): Promise<Category> => {
+  const response: AxiosResponse<Category> = await apiActions.get(
+    `/api/v1/categories/${reference}/`,
+    headers,
+  );
+  return response.data;
+};
+
+
 export const createCategory = async (
   data: createCategory,
   headers: { headers: { Authorization: string } },
