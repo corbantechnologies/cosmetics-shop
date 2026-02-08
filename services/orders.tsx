@@ -66,12 +66,16 @@ export interface ShopOrderItem {
   reference: string | null;
 }
 
-export const getOrders = async (headers: {
-  headers: { Authorization: string };
-}): Promise<Order[]> => {
+export const getOrders = async (
+  headers: { headers: { Authorization: string } },
+  params?: { page?: number; status?: string },
+): Promise<PaginatedResponse<Order>> => {
   const response: AxiosResponse<PaginatedResponse<Order>> =
-    await apiActions.get(`/api/v1/orders/`, headers);
-  return response.data.results || [];
+    await apiActions.get(`/api/v1/orders/`, {
+      ...headers,
+      params,
+    });
+  return response.data;
 };
 
 export const getOrder = async (

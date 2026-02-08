@@ -5,11 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import { getOrders, getOrder } from "@/services/orders";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 
-export function useFetchOrders() {
+export function useFetchOrders(params?: { page?: number; status?: string }) {
   const header = useAxiosAuth();
   return useQuery({
-    queryKey: ["orders"],
-    queryFn: () => getOrders(header),
+    queryKey: ["orders", params],
+    queryFn: () => getOrders(header, params),
     enabled: true,
   });
 }
