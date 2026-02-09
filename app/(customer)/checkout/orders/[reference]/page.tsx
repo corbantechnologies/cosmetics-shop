@@ -9,8 +9,6 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
-  Phone,
-  RefreshCw,
   Lock,
   ChevronLeft,
   Smartphone,
@@ -50,7 +48,7 @@ export default function OrderPaymentPage({
           setPaymentMessage("Payment Successful! Redirecting...");
           toast.success("Payment Received!");
           setTimeout(() => {
-            router.push("/orders");
+            router.push(`/orders/${reference}?success=true`);
           }, 2000);
           setIsPolling(false);
         } else if (
@@ -115,241 +113,341 @@ export default function OrderPaymentPage({
   });
 
   return (
-    <div className="min-h-screen bg-[#FFF1F2] py-8 md:py-12 px-4">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Back Link */}
-        <Link
-          href="/shop"
-          className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4 mr-1" /> Back to Shop
-        </Link>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          {/* CARD 1: YOUR ORDER */}
-          <div className="bg-white rounded-[24px] shadow overflow-hidden">
-            <div className="p-6">
-              <h1 className="text-3xl font-serif font-medium leading-tight drop-shadow-sm">
-                Your Order
-              </h1>
-              <p className="text-white/90 text-sm font-medium mt-1">
-                {order.items.length} items
-              </p>
-            </div>
-            <div className="p-6">
-              {/* Items List */}
-              <div className="space-y-4 mb-6">
-                {order.items.map((item) => (
-                  <div key={item.id} className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-[#F5F5F4] flex items-center justify-center text-xs font-bold text-gray-500 shrink-0">
-                      {item.quantity}x
+    <div className="min-h-screen bg-[#F9F7F2] py-8 md:py-12 px-4 md:px-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8 flex items-center justify-between">
+          <Link
+            href="/orders"
+            className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group"
+          >
+            <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
+            Back to Orders
+          </Link>
+          <div className="flex items-center gap-2 text-xs font-medium text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-100">
+            <Lock className="w-3 h-3" /> Secure Checkout
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* LEFT COLUMN: RECEIPT (Order Summary) */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="bg-white rounded-sm shadow-sm border border-secondary/20 overflow-hidden relative">
+              {/* Receipt Top Decoration */}
+              <div className="h-2 bg-primary/80 w-full" />
+
+              <div className="p-6 md:p-8">
+                <div className="text-center mb-8">
+                  <h1 className="text-2xl font-serif font-bold text-foreground mb-1">
+                    Order Receipt
+                  </h1>
+                  <p className="text-sm text-muted-foreground font-mono">
+                    #{order.reference.toUpperCase()}
+                  </p>
+                </div>
+
+                {/* Items List */}
+                <div className="space-y-4 mb-8">
+                  {order.items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex justify-between items-start text-sm group"
+                    >
+                      <div className="flex gap-3">
+                        <span className="font-mono text-muted-foreground w-6 shrink-0 pt-0.5">
+                          {item.quantity}x
+                        </span>
+                        <div>
+                          <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+                            {item.variant_sku}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate max-w-[180px]">
+                            {item.variant_sku}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="font-medium text-foreground tabular-nums">
+                        {formatCurrency(parseFloat(item.price), currency)}
+                      </span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {item.variant_sku}
-                      </p>
-                    </div>
-                    <div className="text-sm font-bold text-gray-900">
-                      {formatCurrency(parseFloat(item.price), currency)}
-                    </div>
+                  ))}
+                </div>
+
+                {/* Divider */}
+                <div className="border-t-2 border-dashed border-secondary/30 my-6 relative">
+                  <div className="absolute -left-10 -top-1.5 w-3 h-3 bg-[#F9F7F2] rounded-full" />
+                  <div className="absolute -right-10 -top-1.5 w-3 h-3 bg-[#F9F7F2] rounded-full" />
+                </div>
+
+                {/* Totals */}
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Subtotal</span>
+                    <span className="tabular-nums">
+                      {formatCurrency(
+                        parseFloat(order.total_amount) -
+                          parseFloat(order.delivery_cost),
+                        currency,
+                      )}
+                    </span>
                   </div>
-                ))}
-              </div>
-
-              <div className="h-px bg-gray-100 w-full mb-4" />
-
-              {/* Totals */}
-              <div className="space-y-2 text-sm text-gray-500">
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>
-                    {formatCurrency(
-                      parseFloat(order.total_amount) -
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Delivery</span>
+                    <span className="tabular-nums">
+                      {formatCurrency(
                         parseFloat(order.delivery_cost),
-                      currency,
-                    )}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Delivery</span>
-                  <span>
-                    {formatCurrency(parseFloat(order.delivery_cost), currency)}
-                  </span>
+                        currency,
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center pt-4 text-base font-bold text-foreground border-t border-secondary/10 mt-4">
+                    <span>Total Due</span>
+                    <span className="text-xl font-serif text-primary tabular-nums">
+                      {formatCurrency(parseFloat(order.total_amount), currency)}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <div className="h-px bg-gray-100 w-full my-4 border-dashed" />
-
-              <div className="flex justify-between items-baseline">
-                <span className="text-base font-bold text-gray-900">Total</span>
-                <span className="text-xl font-bold text-[#C27848] font-serif">
-                  {formatCurrency(parseFloat(order.total_amount), currency)}
-                </span>
+              {/* Receipt Bottom Decoration */}
+              <div className="bg-[#F9F7F2] h-4 w-full relative -bottom-2">
+                <div
+                  className="absolute top-0 left-0 w-full h-full"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(45deg, transparent 33.333%, #F9F7F2 33.333%, #F9F7F2 66.667%, transparent 66.667%), linear-gradient(-45deg, transparent 33.333%, #F9F7F2 33.333%, #F9F7F2 66.667%, transparent 66.667%)",
+                    backgroundSize: "12px 24px",
+                    backgroundPosition: "0 0",
+                  }}
+                ></div>
               </div>
             </div>
           </div>
 
-          {/* CARD 2: PAYMENT */}
-          <div className="bg-white rounded-[24px] shadow overflow-hidden p-6">
-            {!isPaid ? (
-              <>
-                <h2 className="text-xl font-serif font-bold text-gray-900 mb-1">
-                  Pay with Mobile Money
-                </h2>
-                <p className="text-sm text-gray-500 mb-6">
-                  Enter your phone number to receive a payment prompt
-                </p>
+          {/* RIGHT COLUMN: PAYMENT (Action) */}
+          <div className="lg:col-span-7">
+            <div className="bg-white rounded-sm shadow-md border border-secondary/20 p-6 md:p-10 relative overflow-hidden">
+              {/* Background Pattern */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Select Provider
-                  </label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {/* M-Pesa Option (Selected) */}
-                    <div className="relative group cursor-pointer">
-                      <div className="border-[2px] border-[#C27848] rounded-xl p-4 flex flex-col items-center justify-center gap-2 bg-[#FFFAF5] transition-all relative overflow-hidden">
-                        <div className="absolute top-2 right-2">
-                          <div className="w-4 h-4 bg-[#C27848] rounded-full flex items-center justify-center text-white">
-                            <Check className="w-3 h-3" />
-                          </div>
+              {!isPaid ? (
+                <>
+                  <div className="mb-8">
+                    <h2 className="text-2xl font-serif font-bold text-foreground mb-2">
+                      Details & Payment
+                    </h2>
+                    <p className="text-muted-foreground text-sm">
+                      Complete your purchase securely via M-PESA.
+                    </p>
+                  </div>
+
+                  {/* Payment Methods */}
+                  <div className="mb-8">
+                    <label className="block text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-3">
+                      Payment Method
+                    </label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="relative group cursor-pointer border-2 border-primary bg-primary/5 rounded-sm p-4 flex items-center gap-3 transition-all">
+                        <div className="w-10 h-10 rounded-sm bg-white border border-secondary/20 flex items-center justify-center shrink-0">
+                          <Smartphone className="w-5 h-5 text-green-600" />
                         </div>
-                        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-1">
-                          <Smartphone className="w-5 h-5" />
+                        <div>
+                          <p className="font-bold text-foreground text-sm">
+                            M-PESA
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Mobile Money
+                          </p>
                         </div>
-                        <span className="text-xs font-bold text-gray-900">
-                          M-Pesa
-                        </span>
+                        <div className="absolute top-3 right-3 w-4 h-4 bg-primary rounded-full flex items-center justify-center text-white p-0.5 shadow-sm">
+                          <Check className="w-full h-full" />
+                        </div>
+                      </div>
+                      {/* Placeholder for Card/Other */}
+                      <div className="relative border border-secondary/30 rounded-sm p-4 flex items-center gap-3 opacity-50 cursor-not-allowed grayscale">
+                        <div className="w-10 h-10 rounded-sm bg-secondary/10 flex items-center justify-center shrink-0">
+                          <div className="w-5 h-3 border-2 border-muted-foreground rounded-sm" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground text-sm">
+                            Card
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Coming Soon
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <Formik
-                  initialValues={{ phone_number: order.phone_number || "" }}
-                  validationSchema={validationSchema}
-                  onSubmit={async (values, { setSubmitting }) => {
-                    setPaymentMessage("Sending STK Push...");
-                    try {
-                      const payload = {
-                        phone_number: parseInt(values.phone_number, 10),
-                        order_reference: order.reference,
-                      };
-                      await generateDepositSTKPush(payload);
-                      toast.success("Push sent! Check your phone.");
-                      setPaymentMessage(
-                        "STK Push sent! Please check your phone.",
-                      );
-                      pollPaymentStatus();
-                    } catch (error) {
-                      console.error(error);
-                      toast.error("Failed to initiate payment");
-                      setPaymentMessage(
-                        "Failed to initiate payment. Please try again.",
-                      );
-                    } finally {
-                      setSubmitting(false);
-                    }
-                  }}
-                >
-                  {({ isSubmitting, errors, touched }) => (
-                    <Form className="space-y-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Phone Number
-                        </label>
-                        <div className="relative rounded-xl border border-gray-200 shadow-sm overflow-hidden flex transition-all focus-within:ring-2 focus-within:ring-[#C27848]/20 focus-within:border-[#C27848]">
-                          <div className="bg-gray-50 px-4 flex items-center border-r border-gray-200">
-                            <Phone className="w-4 h-4 text-gray-400 mr-2" />
-                            <span className="text-gray-600 font-medium text-sm">
-                              +254
-                            </span>
+                  <Formik
+                    initialValues={{ phone_number: order.phone_number || "" }}
+                    validationSchema={validationSchema}
+                    onSubmit={async (values, { setSubmitting }) => {
+                      setPaymentMessage("Initiating M-PESA request...");
+                      try {
+                        const payload = {
+                          phone_number: parseInt(values.phone_number, 10),
+                          order_reference: reference,
+                        };
+                        await generateDepositSTKPush(payload);
+                        toast.success("Push sent! Check your phone.");
+                        setPaymentMessage("Action Required: Check your phone");
+                        pollPaymentStatus();
+                      } catch (error) {
+                        console.error(error);
+                        toast.error("Failed to initiate payment");
+                        setPaymentMessage("Failed to initiate. Please retry.");
+                      } finally {
+                        setSubmitting(false);
+                      }
+                    }}
+                  >
+                    {({ isSubmitting, errors, touched }) => (
+                      <Form className="space-y-8">
+                        <div>
+                          <label className="block text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-3">
+                            M-PESA Phone Number
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                              <span className="text-foreground font-medium text-lg border-r border-secondary/30 pr-3 mr-1">
+                                +254
+                              </span>
+                            </div>
+                            <Field
+                              name="phone_number"
+                              type="tel"
+                              className="block w-full py-4 pl-20 pr-4 text-lg bg-secondary/5 border border-secondary/30 rounded-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                              placeholder="7XX XXX XXX"
+                            />
+                            {errors.phone_number && touched.phone_number && (
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-red-500">
+                                <AlertCircle className="w-5 h-5" />
+                              </div>
+                            )}
                           </div>
-                          <Field
-                            name="phone_number"
-                            type="tel"
-                            className="block w-full py-3 px-4 text-gray-900 placeholder-gray-400 focus:outline-none text-base"
-                            placeholder="7XX XXX XXX"
-                          />
-                        </div>
-                        <div className="h-5">
                           {errors.phone_number && touched.phone_number && (
-                            <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
-                              <AlertCircle className="w-3 h-3" />
+                            <p className="mt-2 text-sm text-red-500 flex items-center gap-1 animate-pulse">
                               {errors.phone_number}
                             </p>
                           )}
                         </div>
-                      </div>
 
-                      {/* Status Message */}
-                      {(isPolling || paymentMessage) && (
-                        <div
-                          className={`p-4 rounded-xl flex items-center gap-3 text-sm ${
-                            paymentMessage.includes("Successful")
-                              ? "bg-green-50 text-green-700"
-                              : paymentMessage.includes("Failed")
-                                ? "bg-red-50 text-red-700"
-                                : "bg-blue-50 text-blue-700"
-                          }`}
-                        >
-                          {isPolling && (
-                            <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                        {/* Status / Instructions */}
+                        <div className="bg-secondary/10 rounded-sm p-4 border border-secondary/20">
+                          {isPolling || paymentMessage ? (
+                            <div className="flex flex-col gap-3">
+                              <div
+                                className={`flex items-center gap-3 font-medium ${paymentMessage.includes("Failed") ? "text-red-700" : "text-foreground"}`}
+                              >
+                                {isPolling && (
+                                  <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                                )}
+                                <span>{paymentMessage}</span>
+                              </div>
+                              {isPolling && (
+                                <div className="w-full bg-secondary/20 rounded-full h-1.5 overflow-hidden">
+                                  <div className="h-full bg-primary animate-progress-indeterminate" />
+                                </div>
+                              )}
+                              {isPolling && (
+                                <p className="text-sm text-muted-foreground">
+                                  Please enter your PIN on the M-PESA prompt
+                                  sent to your phone.
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="flex gap-4">
+                              <div className="flex flex-col gap-1 flex-1">
+                                <span className="text-xs font-bold text-primary uppercase">
+                                  Step 1
+                                </span>
+                                <span className="text-sm text-foreground">
+                                  Click &quot;Pay Now&quot; below
+                                </span>
+                              </div>
+                              <div className="w-px bg-secondary/20" />
+                              <div className="flex flex-col gap-1 flex-1">
+                                <span className="text-xs font-bold text-primary uppercase">
+                                  Step 2
+                                </span>
+                                <span className="text-sm text-foreground">
+                                  Enter PIN on your phone
+                                </span>
+                              </div>
+                            </div>
                           )}
-                          <p className="font-medium">
-                            {isPolling
-                              ? "Check your phone to enter PIN"
-                              : paymentMessage}
-                          </p>
                         </div>
-                      )}
 
-                      <Button
-                        type="submit"
-                        disabled={isSubmitting || isPolling}
-                        className="w-full rounded bg-green-500 text-white py-3"
-                      >
-                        {isSubmitting ? (
-                          <Loader2 className="w-6 h-6 animate-spin" />
-                        ) : (
-                          `Pay ${formatCurrency(parseFloat(order.total_amount), currency)}`
-                        )}
-                      </Button>
+                        <Button
+                          type="submit"
+                          disabled={isSubmitting || isPolling}
+                          className="w-full relative group overflow-hidden rounded-sm bg-foreground text-background py-4 transition-all hover:bg-black disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                          <div className="relative z-10 flex items-center justify-center gap-2 font-medium text-lg">
+                            {isSubmitting ? (
+                              <Loader2 className="w-6 h-6 animate-spin" />
+                            ) : (
+                              <>
+                                <span>Pay Now</span>
+                                <span className="opacity-50">|</span>
+                                <span>
+                                  {formatCurrency(
+                                    parseFloat(order.total_amount),
+                                    currency,
+                                  )}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                          <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                        </Button>
 
-                      <button
-                        type="button"
-                        onClick={() => refetch()}
-                        className="w-full text-center text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center gap-1.5"
-                      >
-                        <RefreshCw
-                          className={`w-3 h-3 ${isLoading ? "animate-spin" : ""}`}
-                        />
-                        I&apos;ve already paid
-                      </button>
-                    </Form>
-                  )}
-                </Formik>
-              </>
-            ) : (
-              <div className="text-center py-6">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600 animate-in zoom-in duration-300">
-                  <CheckCircle2 className="w-8 h-8" />
+                        <button
+                          type="button"
+                          onClick={() => refetch()}
+                          className="w-full text-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
+                        >
+                          I&apos;ve already completed payment
+                        </button>
+                      </Form>
+                    )}
+                  </Formik>
+                </>
+              ) : (
+                <div className="text-center py-10 flex flex-col items-center">
+                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 text-green-600 animate-in zoom-in duration-500 shadow-sm border-4 border-white">
+                    <CheckCircle2 className="w-10 h-10" />
+                  </div>
+                  <h2 className="text-3xl font-serif font-bold text-foreground mb-3">
+                    Payment Successful
+                  </h2>
+                  <p className="text-muted-foreground mb-8 max-w-sm">
+                    Thank you! Your order{" "}
+                    <strong>#{order.reference.toUpperCase()}</strong> has been
+                    confirmed.
+                  </p>
+                  <Link
+                    href="/orders"
+                    className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground rounded-sm font-bold transition-all hover:bg-primary/90 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                  >
+                    View My Orders
+                  </Link>
                 </div>
-                <h2 className="text-2xl font-serif font-bold text-gray-900 mb-2">
-                  Payment Completed
-                </h2>
-                <p className="text-gray-500 mb-8">
-                  Thank you, your order has been processed.
-                </p>
-                <Link
-                  href="/orders"
-                  className="block w-full bg-gray-900 text-white h-12 rounded-xl font-bold flex items-center justify-center transition-colors hover:bg-black"
-                >
-                  View My Orders
-                </Link>
-              </div>
-            )}
+              )}
 
-            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400">
-              <Lock className="w-3 h-3" /> Secured & encrypted payment
+              <div className="mt-8 pt-6 border-t border-secondary/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Lock className="w-3 h-3" />
+                  <span>256-bit SSL Secured</span>
+                </div>
+                <div className="flex gap-2 opacity-50 grayscale">
+                  {/* Icons for payment providers just for trust visuals */}
+                  <div className="h-6 w-10 bg-secondary/20 rounded-sm" />
+                  <div className="h-6 w-10 bg-secondary/20 rounded-sm" />
+                </div>
+              </div>
             </div>
           </div>
         </div>

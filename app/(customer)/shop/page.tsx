@@ -95,7 +95,7 @@ function ProductList() {
           <div className="flex flex-nowrap md:flex-wrap gap-2 min-w-max px-1">
             <button
               onClick={() => handleCategoryClick(null)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border whitespace-nowrap ${
+              className={`px-6 py-2 rounded-sm text-sm font-medium transition-all duration-300 border whitespace-nowrap ${
                 selectedCategory === null
                   ? "bg-foreground text-background border-foreground"
                   : "bg-background text-foreground border-border hover:border-foreground"
@@ -107,7 +107,7 @@ function ProductList() {
               <button
                 key={category.reference}
                 onClick={() => handleCategoryClick(category.reference)}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border whitespace-nowrap ${
+                className={`px-6 py-2 rounded-sm text-sm font-medium transition-all duration-300 border whitespace-nowrap ${
                   selectedCategory === category.reference
                     ? "bg-foreground text-background border-foreground"
                     : "bg-background text-foreground border-border hover:border-foreground"
@@ -134,7 +134,7 @@ function ProductList() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 bg-secondary/5 rounded-lg border border-dashed border-secondary/30">
+          <div className="text-center py-20 bg-secondary/5 rounded-sm border border-dashed border-secondary/30">
             <p className="text-foreground/60 mb-4">
               No products found in this category.
             </p>

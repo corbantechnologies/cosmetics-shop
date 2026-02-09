@@ -69,7 +69,7 @@ export default function Navbar() {
               {/* Dropdown Menu */}
               {isShopOpen && (
                 <div className="absolute top-full left-0 w-64 pt-2 animate-in fade-in duration-200">
-                  <div className="bg-white rounded-sm shadow-xl border border-secondary/10 overflow-hidden">
+                  <div className="bg-white rounded-sm shadow-sm border border-secondary/30 overflow-hidden">
                     {/* Add a "Shop All" link at the top */}
                     <div className="group/cat relative">
                       <Link
