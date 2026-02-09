@@ -9,8 +9,6 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
-  Phone,
-  RefreshCw,
   Lock,
   ChevronLeft,
   Smartphone,
@@ -50,7 +48,7 @@ export default function OrderPaymentPage({
           setPaymentMessage("Payment Successful! Redirecting...");
           toast.success("Payment Received!");
           setTimeout(() => {
-            router.push("/orders");
+            router.push(`/orders/${reference}?success=true`);
           }, 2000);
           setIsPolling(false);
         } else if (
@@ -119,11 +117,11 @@ export default function OrderPaymentPage({
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 flex items-center justify-between">
           <Link
-            href="/shop"
+            href="/orders"
             className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group"
           >
             <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
-            Back to Shop
+            Back to Orders
           </Link>
           <div className="flex items-center gap-2 text-xs font-medium text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-100">
             <Lock className="w-3 h-3" /> Secure Checkout
@@ -289,7 +287,7 @@ export default function OrderPaymentPage({
                       try {
                         const payload = {
                           phone_number: parseInt(values.phone_number, 10),
-                          order_reference: order.reference,
+                          order_reference: reference,
                         };
                         await generateDepositSTKPush(payload);
                         toast.success("Push sent! Check your phone.");
