@@ -213,7 +213,7 @@ export default function CheckoutPage() {
                             {item.variant_name}
                           </h4>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-muted-foreground bg-secondary/10 px-2 py-0.5 rounded-full">
+                            <span className="text-xs text-muted-foreground bg-secondary/10 px-2 py-0.5 rounded-sm">
                               Qty: {item.quantity}
                             </span>
                           </div>
@@ -274,7 +274,7 @@ export default function CheckoutPage() {
                   {phoneNumber || "above"}).
                 </p>
                 <div className="mt-2 flex gap-2">
-                  <div className="h-6 w-12 bg-white rounded border border-gray-200 flex items-center justify-center text-[10px] font-bold text-green-600">
+                  <div className="h-6 w-12 bg-white rounded-sm border border-gray-200 flex items-center justify-center text-[10px] font-bold text-green-600">
                     M-PESA
                   </div>
                 </div>
@@ -283,7 +283,7 @@ export default function CheckoutPage() {
               <button
                 onClick={handleCheckout}
                 disabled={checkingOut || !selectedStationCode || !phoneNumber}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-4 rounded-md font-medium text-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-4 rounded-sm font-medium text-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
               >
                 {checkingOut ? (
                   <Loader2 className="w-5 h-5 animate-spin" />

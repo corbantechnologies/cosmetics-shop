@@ -48,7 +48,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       {/* Drawer */}
       <div
         ref={drawerRef}
-        className="relative z-[100] w-full sm:w-[400px] h-full bg-background shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col"
+        className="relative z-[100] w-full sm:w-[400px] h-full bg-background shadow-sm border-l border-secondary/30 animate-in slide-in-from-right duration-300 flex flex-col"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border">
@@ -127,12 +127,6 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               >
                 Checkout
               </Link>
-              {/* <button
-                                onClick={onClose}
-                                className="block w-full py-3 border border-input bg-background hover:bg-accent text-center rounded-sm font-medium transition-colors"
-                            >
-                                Continue Shopping
-                            </button> */}
             </div>
           </div>
         )}

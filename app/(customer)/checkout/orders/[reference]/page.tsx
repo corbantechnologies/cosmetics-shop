@@ -126,12 +126,12 @@ export default function OrderPaymentPage({
         </Link>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           {/* CARD 1: YOUR ORDER */}
-          <div className="bg-white rounded-[24px] shadow overflow-hidden">
+          <div className="bg-white rounded-sm shadow-sm overflow-hidden">
             <div className="p-6">
               <h1 className="text-3xl font-serif font-medium leading-tight drop-shadow-sm">
                 Your Order
               </h1>
-              <p className="text-white/90 text-sm font-medium mt-1">
+              <p className="text-foreground/90 text-sm font-medium mt-1">
                 {order.items.length} items
               </p>
             </div>
@@ -140,25 +140,25 @@ export default function OrderPaymentPage({
               <div className="space-y-4 mb-6">
                 {order.items.map((item) => (
                   <div key={item.id} className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-[#F5F5F4] flex items-center justify-center text-xs font-bold text-gray-500 shrink-0">
+                    <div className="w-10 h-10 rounded-sm bg-secondary/10 flex items-center justify-center text-xs font-bold text-foreground/70 shrink-0">
                       {item.quantity}x
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
+                      <p className="text-sm font-medium text-foreground truncate">
                         {item.variant_sku}
                       </p>
                     </div>
-                    <div className="text-sm font-bold text-gray-900">
+                    <div className="text-sm font-bold text-foreground">
                       {formatCurrency(parseFloat(item.price), currency)}
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="h-px bg-gray-100 w-full mb-4" />
+              <div className="h-px bg-secondary/20 w-full mb-4" />
 
               {/* Totals */}
-              <div className="space-y-2 text-sm text-gray-500">
+              <div className="space-y-2 text-sm text-foreground/60">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span>
@@ -177,11 +177,13 @@ export default function OrderPaymentPage({
                 </div>
               </div>
 
-              <div className="h-px bg-gray-100 w-full my-4 border-dashed" />
+              <div className="h-px bg-secondary/20 w-full my-4 border-dashed" />
 
               <div className="flex justify-between items-baseline">
-                <span className="text-base font-bold text-gray-900">Total</span>
-                <span className="text-xl font-bold text-[#C27848] font-serif">
+                <span className="text-base font-bold text-foreground">
+                  Total
+                </span>
+                <span className="text-xl font-bold text-primary font-serif">
                   {formatCurrency(parseFloat(order.total_amount), currency)}
                 </span>
               </div>
@@ -189,33 +191,33 @@ export default function OrderPaymentPage({
           </div>
 
           {/* CARD 2: PAYMENT */}
-          <div className="bg-white rounded-[24px] shadow overflow-hidden p-6">
+          <div className="bg-white rounded-sm shadow-sm overflow-hidden p-6">
             {!isPaid ? (
               <>
-                <h2 className="text-xl font-serif font-bold text-gray-900 mb-1">
+                <h2 className="text-xl font-serif font-bold text-foreground mb-1">
                   Pay with Mobile Money
                 </h2>
-                <p className="text-sm text-gray-500 mb-6">
+                <p className="text-sm text-foreground/60 mb-6">
                   Enter your phone number to receive a payment prompt
                 </p>
 
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-foreground mb-3">
                     Select Provider
                   </label>
                   <div className="grid grid-cols-3 gap-3">
                     {/* M-Pesa Option (Selected) */}
                     <div className="relative group cursor-pointer">
-                      <div className="border-[2px] border-[#C27848] rounded-xl p-4 flex flex-col items-center justify-center gap-2 bg-[#FFFAF5] transition-all relative overflow-hidden">
+                      <div className="border-[2px] border-primary rounded-sm p-4 flex flex-col items-center justify-center gap-2 bg-primary/5 transition-all relative overflow-hidden">
                         <div className="absolute top-2 right-2">
-                          <div className="w-4 h-4 bg-[#C27848] rounded-full flex items-center justify-center text-white">
+                          <div className="w-4 h-4 bg-primary rounded-sm flex items-center justify-center text-white">
                             <Check className="w-3 h-3" />
                           </div>
                         </div>
-                        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-1">
+                        <div className="w-10 h-10 rounded-sm bg-green-100 flex items-center justify-center text-green-600 mb-1">
                           <Smartphone className="w-5 h-5" />
                         </div>
-                        <span className="text-xs font-bold text-gray-900">
+                        <span className="text-xs font-bold text-foreground">
                           M-Pesa
                         </span>
                       </div>
@@ -253,20 +255,20 @@ export default function OrderPaymentPage({
                   {({ isSubmitting, errors, touched }) => (
                     <Form className="space-y-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-foreground mb-2">
                           Phone Number
                         </label>
-                        <div className="relative rounded-xl border border-gray-200 shadow-sm overflow-hidden flex transition-all focus-within:ring-2 focus-within:ring-[#C27848]/20 focus-within:border-[#C27848]">
-                          <div className="bg-gray-50 px-4 flex items-center border-r border-gray-200">
-                            <Phone className="w-4 h-4 text-gray-400 mr-2" />
-                            <span className="text-gray-600 font-medium text-sm">
+                        <div className="relative rounded-sm border border-input shadow-sm overflow-hidden flex transition-all focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary">
+                          <div className="bg-secondary/10 px-4 flex items-center border-r border-input">
+                            <Phone className="w-4 h-4 text-muted-foreground mr-2" />
+                            <span className="text-foreground/80 font-medium text-sm">
                               +254
                             </span>
                           </div>
                           <Field
                             name="phone_number"
                             type="tel"
-                            className="block w-full py-3 px-4 text-gray-900 placeholder-gray-400 focus:outline-none text-base"
+                            className="block w-full py-3 px-4 text-foreground placeholder-muted-foreground focus:outline-none text-base"
                             placeholder="7XX XXX XXX"
                           />
                         </div>
@@ -283,7 +285,7 @@ export default function OrderPaymentPage({
                       {/* Status Message */}
                       {(isPolling || paymentMessage) && (
                         <div
-                          className={`p-4 rounded-xl flex items-center gap-3 text-sm ${
+                          className={`p-4 rounded-sm flex items-center gap-3 text-sm ${
                             paymentMessage.includes("Successful")
                               ? "bg-green-50 text-green-700"
                               : paymentMessage.includes("Failed")
@@ -305,10 +307,10 @@ export default function OrderPaymentPage({
                       <Button
                         type="submit"
                         disabled={isSubmitting || isPolling}
-                        className="w-full rounded bg-green-500 text-white py-3"
+                        className="w-full rounded-sm bg-green-600 hover:bg-green-700 text-white py-3 transition-colors font-medium"
                       >
                         {isSubmitting ? (
-                          <Loader2 className="w-6 h-6 animate-spin" />
+                          <Loader2 className="w-6 h-6 animate-spin mx-auto" />
                         ) : (
                           `Pay ${formatCurrency(parseFloat(order.total_amount), currency)}`
                         )}
@@ -317,7 +319,7 @@ export default function OrderPaymentPage({
                       <button
                         type="button"
                         onClick={() => refetch()}
-                        className="w-full text-center text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center gap-1.5"
+                        className="w-full text-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-1.5"
                       >
                         <RefreshCw
                           className={`w-3 h-3 ${isLoading ? "animate-spin" : ""}`}
@@ -333,22 +335,22 @@ export default function OrderPaymentPage({
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600 animate-in zoom-in duration-300">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h2 className="text-2xl font-serif font-bold text-gray-900 mb-2">
+                <h2 className="text-2xl font-serif font-bold text-foreground mb-2">
                   Payment Completed
                 </h2>
-                <p className="text-gray-500 mb-8">
+                <p className="text-muted-foreground mb-8">
                   Thank you, your order has been processed.
                 </p>
                 <Link
                   href="/orders"
-                  className="block w-full bg-gray-900 text-white h-12 rounded-xl font-bold flex items-center justify-center transition-colors hover:bg-black"
+                  className="block w-full bg-foreground text-background h-12 rounded-sm font-bold flex items-center justify-center transition-colors hover:bg-black/90"
                 >
                   View My Orders
                 </Link>
               </div>
             )}
 
-            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400">
+            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
               <Lock className="w-3 h-3" /> Secured & encrypted payment
             </div>
           </div>
