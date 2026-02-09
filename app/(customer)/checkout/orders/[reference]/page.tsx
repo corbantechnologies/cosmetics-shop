@@ -160,7 +160,7 @@ export default function OrderPaymentPage({
                         </span>
                         <div>
                           <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                            {item.variant_name || item.variant_sku}
+                            {item.variant_sku}
                           </p>
                           <p className="text-xs text-muted-foreground truncate max-w-[180px]">
                             {item.variant_sku}
@@ -222,14 +222,6 @@ export default function OrderPaymentPage({
                   }}
                 ></div>
               </div>
-            </div>
-
-            <div className="hidden lg:block bg-blue-50/50 rounded-sm p-4 border border-blue-100 text-sm text-blue-800">
-              <p className="flex gap-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-                We&apos;ve sent a confirmation email to{" "}
-                <strong>{order.customer_email || "your email"}</strong>.
-              </p>
             </div>
           </div>
 
@@ -374,7 +366,7 @@ export default function OrderPaymentPage({
                                   Step 1
                                 </span>
                                 <span className="text-sm text-foreground">
-                                  Click "Pay Now" below
+                                  Click &quot;Pay Now&quot; below
                                 </span>
                               </div>
                               <div className="w-px bg-secondary/20" />
