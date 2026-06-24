@@ -38,7 +38,7 @@ export default function OrderDetailPage({
     return (
       <div className="min-h-screen flex flex-col items-center justify-center space-y-4 bg-[#F9F7F2]">
         <AlertCircle className="w-16 h-16 text-red-400" />
-        <h1 className="text-2xl font-bold text-foreground">Order Not Found</h1>
+        <h1 className="text-2xl font-serif font-bold text-foreground">Order Not Found</h1>
         <Link
           href="/orders"
           className="text-primary hover:underline flex items-center gap-2"
@@ -215,7 +215,7 @@ export default function OrderDetailPage({
                 <span className="text-base font-bold text-foreground">
                   Total
                 </span>
-                <span className="text-2xl font-bold text-primary font-serif">
+                <span className="text-2xl font-serif font-bold text-primary font-serif">
                   {formatCurrency(parseFloat(order.total_amount), currency)}
                 </span>
               </div>
