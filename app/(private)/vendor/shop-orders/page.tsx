@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useFetchShopOrders } from "@/hooks/shoporders/actions";
 import SectionHeader from "@/components/dashboard/SectionHeader";
@@ -12,7 +12,7 @@ export default function ShopOrdersPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-12">
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 py-6 md:py-12">
         <div className="flex justify-between items-start md:items-center mb-6">
           <SectionHeader
             title="Shop Orders"
@@ -114,3 +114,4 @@ export default function ShopOrdersPage() {
     </div>
   );
 }
+

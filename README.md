@@ -1,1 +1,1 @@
-# Cosmetics Application
+# Clate Cosmetics Application
