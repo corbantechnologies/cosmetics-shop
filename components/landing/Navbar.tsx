@@ -246,16 +246,14 @@ export default function Navbar() {
                   )}
                 </div>
 
-                {["Our Story", "Contact"].map((item) => (
-                  <Link
-                    key={item}
-                    href={`/${item.toLowerCase().replace(" ", "-")}`}
-                    className="text-foreground hover:text-primary transition-colors py-2 border-b border-secondary/20"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {item}
-                  </Link>
-                ))}
+                <Link
+                  href="/orders"
+                  className="flex items-center px-3 py-3 text-[#1D1D1F] font-medium rounded-xl hover:bg-[#F5F5F7] transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  My Orders
+                </Link>
+
                 {session ? (
                   <>
                     <Link
