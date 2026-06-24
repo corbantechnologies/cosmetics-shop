@@ -122,6 +122,13 @@ export default function Navbar() {
                 </div>
               )}
             </div>
+
+            <Link
+              href="/orders"
+              className="text-sm text-[#1D1D1F]/80 hover:text-[#0071E3] transition-colors outline-none focus-visible:ring-1 focus-visible:ring-[#0071E3] rounded px-1"
+            >
+              Orders
+            </Link>
           </div>
 
           {/* Icons & Mobile Toggle */}
