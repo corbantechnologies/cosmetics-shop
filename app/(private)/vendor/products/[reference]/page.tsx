@@ -10,7 +10,7 @@ import UploadProductImages from "@/forms/products/UploadProductImages";
 import UpdateProduct from "@/forms/products/UpdateProduct";
 import UpdateProductVariant from "@/forms/products/UpdateProductVariant";
 import CreateProductVariant from "@/forms/products/CreateProductVariant";
-import { updateProduct } from "@/services/products";
+import { updateProduct, deleteProductImage } from "@/services/products";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import toast from "react-hot-toast";
 
@@ -24,6 +24,7 @@ import {
   Plus,
   Rocket,
   Loader2,
+  Trash2,
 } from "lucide-react";
 import { ProductVariant } from "@/services/productvariants";
 
@@ -51,6 +52,22 @@ export default function ProductPage() {
     null,
   );
   const [publishing, setPublishing] = useState(false);
+  const [isDeletingImage, setIsDeletingImage] = useState(false);
+
+  const handleDeleteImage = async (imageReference: string) => {
+    if (!confirm("Are you sure you want to delete this image?")) return;
+    setIsDeletingImage(true);
+    try {
+      await deleteProductImage(imageReference, authHeaders);
+      toast.success("Image deleted successfully");
+      refetch();
+    } catch (error) {
+      toast.error("Failed to delete image");
+      console.error(error);
+    } finally {
+      setIsDeletingImage(false);
+    }
+  };
 
   const handleEditVariant = (variant: ProductVariant) => {
     setSelectedVariant(variant);
@@ -223,6 +240,14 @@ export default function ProductPage() {
                         alt={`${product.name} ${idx + 1}`}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
+                      <button
+                        onClick={() => handleDeleteImage(img.reference)}
+                        disabled={isDeletingImage}
+                        className="absolute top-2 right-2 p-1.5 bg-red-500/80 hover:bg-red-600 text-white rounded-sm opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
+                        title="Delete Image"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   ))}
                 </div>
