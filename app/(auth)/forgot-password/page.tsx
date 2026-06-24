@@ -42,8 +42,8 @@ export default function ForgotPassword() {
           </div>
           <div className="text-white">
             <p className="text-3xl font-serif leading-tight mb-4">
-              "Recover access <br />
-              to your beauty world."
+              &quot;Recover access <br />
+              to your beauty world.&quot;
             </p>
           </div>
         </div>
@@ -70,7 +70,7 @@ export default function ForgotPassword() {
               Forgot Password?
             </h1>
             <p className="text-foreground/60">
-              Enter your email address and we'll send you a link to reset your
+              Enter your email address and we&apos;ll send you a link to reset your
               password.
             </p>
           </div>
